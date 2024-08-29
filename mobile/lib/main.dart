@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../components/header.dart';
+import '../components/footer.dart'; 
 
 void main() {
   runApp(MyApp());
@@ -13,13 +14,13 @@ class MyApp extends StatelessWidget {
         appBar: Header(
           title: 'Wallet - IFPR',
           onBackPressed: () {
-            // Ação ao clicar na seta de retorno
             Navigator.of(context).pop();
           },
         ),
         body: Center(
           child: Text('Conteúdo principal'),
         ),
+        bottomNavigationBar: Footer(), // Adiciona o footer
       ),
     );
   }
