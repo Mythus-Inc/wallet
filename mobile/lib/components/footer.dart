@@ -7,7 +7,7 @@ class Footer extends StatelessWidget {
       borderRadius: BorderRadius.vertical(top: Radius.circular(50.0)), 
       child: Container(
         color: Colors.green,
-        height: 40.0,
+        height: 40.0, // Altura do footer
         child: Center(
           child: Text(
             '2024 © Mythus All rights reserved',

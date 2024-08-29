@@ -1,25 +1,43 @@
 import 'package:flutter/material.dart';
-import '../components/header.dart'; // Importa o Header
-import '../components/footer.dart'; // Importa o Footer
+import '../components/header.dart';
+import '../components/footer.dart';
 
 class CarteirinhaPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Header(title: 'Wallet - IFPR',), // Header importado
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Container(
-              color: Colors.white, // Cor de fundo para o restante da tela
-            ),
-          ),
-          Center(
-            child: CarouselWidget(), // Carrossel no meio
-          ),
-        ],
+      appBar: Header(
+        title: 'Wallet - IFPR',
+        onBackPressed: () {
+          Navigator.of(context).pop();
+        },
       ),
-      bottomNavigationBar: Footer(), // Footer importado
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final double screenHeight = constraints.maxHeight;
+          final double appBarHeight = AppBar().preferredSize.height; // altura padrão do AppBar
+          final double footerHeight = 20.0; // Height of the Footer
+          final double additionalSpacing = 5.0; // espaço para adicionar os botões
+          final double carouselHeight = (screenHeight - appBarHeight - footerHeight - additionalSpacing);
+
+          return Container(
+            color: Colors.white, // Set the background color to match the carousel
+            child: Column(
+              children: [
+                Container(
+                  height: carouselHeight,
+                  child: Center(
+                    child: CarouselWidget(), // Carousel takes up the defined height
+                  ),
+                ),
+                SizedBox(height: additionalSpacing), // Adds space between the carousel and footer
+                Spacer(), // Fills the remaining space to push the footer to the bottom
+              ],
+            ),
+          );
+        },
+      ),
+      bottomNavigationBar: Footer(), // Footer remains fixed at the bottom
     );
   }
 }
@@ -27,14 +45,16 @@ class CarteirinhaPage extends StatelessWidget {
 class CarouselWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width; // Get screen width
+
     return Container(
-      width: 300.0, // Largura do carrossel
-      height: 200.0, // Altura do carrossel
+      width: screenWidth, // Set carousel width to screen width
+      color: Colors.white, // Set the same color as the background of the screen
       child: PageView(
         scrollDirection: Axis.horizontal,
         children: <Widget>[
-          _buildCarouselItem(const Color.fromARGB(255, 173, 149, 149), 'Carteirinha'),
-          _buildCarouselItem(const Color.fromARGB(255, 173, 149, 149), 'QR Code'),
+          _buildCarouselItem(Colors.white, 'Carteirinha'),
+          _buildCarouselItem(Colors.white, 'QR Code'),
         ],
       ),
     );
