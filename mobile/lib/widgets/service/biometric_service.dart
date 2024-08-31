@@ -1,19 +1,30 @@
 import 'package:local_auth/local_auth.dart';
 
-class BiometricService{
+class BiometricService { //utilizar extends ChangeNotifier quando for salvar um objeto
 
-  final LocalAuthentication auth;
-  BiometricService({required this.auth});
+  final LocalAuthentication auth = LocalAuthentication();
 
   Future<bool> isBiometricAvailable() async {
-    final bool canAuthenticateWithBiometrics = await auth.canCheckBiometrics;
-    return canAuthenticateWithBiometrics || await auth.isDeviceSupported();
+    try{
+      final bool canAuthenticateWithBiometrics = await auth.canCheckBiometrics;
+      return canAuthenticateWithBiometrics;
+    }catch(e){
+      return false;
+    } 
+  }
+
+  Future<void> getListBiometricsTypes() async {
+    List<BiometricType> listBiometricType = await auth.getAvailableBiometrics();
   }
 
   Future<bool> authenticate() async {
     return await auth.authenticate(
       localizedReason: 'Por favor, autentique-se para acessar o app.',
-    );
+      options: const AuthenticationOptions(
+          biometricOnly: true,     
+          useErrorDialogs: true,   
+          stickyAuth: true,        
+      ),
+    ); 
   }
-
 }
