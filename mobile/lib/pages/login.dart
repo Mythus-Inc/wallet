@@ -9,6 +9,24 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool _passwordVisible = false;
   final TextEditingController _userPasswordController = TextEditingController();
+  final FocusNode _passwordFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _passwordFocusNode.addListener(() {
+      setState(() {
+        // Mostra o ícone apenas quando o campo de senha está em foco
+        _passwordVisible = _passwordFocusNode.hasFocus ? false : _passwordVisible;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _passwordFocusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,10 +97,12 @@ class _LoginPageState extends State<LoginPage> {
                       textAlign: TextAlign.left,
                     ),
                   ),
+                  // Padding Senha
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 40),
                     child: TextFormField(
                       controller: _userPasswordController,
+                      focusNode: _passwordFocusNode,
                       keyboardType: TextInputType.text,
                       obscureText: !_passwordVisible,
                       decoration: InputDecoration(
@@ -99,22 +119,24 @@ class _LoginPageState extends State<LoginPage> {
                           borderRadius: BorderRadius.circular(15),
                           borderSide: BorderSide.none,
                         ),
-                        suffixIcon: Padding(
-                          padding: const EdgeInsets.only(right: 5.0), 
-                          child: IconButton(
-                            icon: Icon(
-                              _passwordVisible
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
-                              color: Colors.black, 
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _passwordVisible = !_passwordVisible;
-                              });
-                            },
-                          ),
-                        ),
+                        suffixIcon: _passwordFocusNode.hasFocus
+                            ? Padding(
+                                padding: const EdgeInsets.only(right: 3.0),
+                                child: IconButton(
+                                  icon: Icon(
+                                    _passwordVisible
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
+                                    color: Colors.black,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _passwordVisible = !_passwordVisible;
+                                    });
+                                  },
+                                ),
+                              )
+                            : null,
                       ),
                       style: TextStyle(
                         fontSize: 20,
