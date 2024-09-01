@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
 import '/components/footer.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  bool _passwordVisible = false;
+  final TextEditingController _userPasswordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,7 +31,7 @@ class LoginPage extends StatelessWidget {
                   SizedBox(height: 100),
                   // Padding RA
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 40), // Adiciona padding horizontal externo
+                    padding: EdgeInsets.symmetric(horizontal: 40),
                     child: Text(
                       "R.A.",
                       style: TextStyle(
@@ -35,7 +43,7 @@ class LoginPage extends StatelessWidget {
                   ),
                   // Padding RA
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 40), // Adiciona padding horizontal externo
+                    padding: EdgeInsets.symmetric(horizontal: 40),
                     child: TextFormField(
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
@@ -61,7 +69,7 @@ class LoginPage extends StatelessWidget {
                   SizedBox(height: 30),
                   // Padding Senha
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 40), // Adiciona padding horizontal externo
+                    padding: EdgeInsets.symmetric(horizontal: 40),
                     child: Text(
                       "Senha",
                       style: TextStyle(
@@ -71,12 +79,12 @@ class LoginPage extends StatelessWidget {
                       textAlign: TextAlign.left,
                     ),
                   ),
-                  // Padding Senha
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 40), // Adiciona padding horizontal externo
+                    padding: EdgeInsets.symmetric(horizontal: 40),
                     child: TextFormField(
+                      controller: _userPasswordController,
                       keyboardType: TextInputType.text,
-                      obscureText: true,
+                      obscureText: !_passwordVisible,
                       decoration: InputDecoration(
                         floatingLabelBehavior: FloatingLabelBehavior.never,
                         labelText: "Senha",
@@ -91,6 +99,22 @@ class LoginPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(15),
                           borderSide: BorderSide.none,
                         ),
+                        suffixIcon: Padding(
+                          padding: const EdgeInsets.only(right: 5.0), 
+                          child: IconButton(
+                            icon: Icon(
+                              _passwordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Colors.black, 
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _passwordVisible = !_passwordVisible;
+                              });
+                            },
+                          ),
+                        ),
                       ),
                       style: TextStyle(
                         fontSize: 20,
@@ -100,7 +124,7 @@ class LoginPage extends StatelessWidget {
                   SizedBox(height: 30),
                   // Padding Acessar
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 40), // Adiciona padding horizontal externo
+                    padding: EdgeInsets.symmetric(horizontal: 40),
                     child: Container(
                       height: 60,
                       alignment: Alignment.center,
@@ -124,7 +148,7 @@ class LoginPage extends StatelessWidget {
                   ),
                   // Padding Recuperar Senha
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 40), // Adiciona padding horizontal externo
+                    padding: EdgeInsets.symmetric(horizontal: 40),
                     child: Container(
                       height: 40,
                       alignment: Alignment.center,
