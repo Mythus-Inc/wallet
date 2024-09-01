@@ -9,6 +9,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool _passwordVisible = false;
   final TextEditingController _userPasswordController = TextEditingController();
+  final TextEditingController _raController = TextEditingController();
   final FocusNode _passwordFocusNode = FocusNode();
 
   @override
@@ -25,7 +26,13 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void dispose() {
     _passwordFocusNode.dispose();
+    _userPasswordController.dispose();
+    _raController.dispose();
     super.dispose();
+  }
+
+  bool _isFormValid() {
+    return _raController.text.isNotEmpty && _userPasswordController.text.isNotEmpty;
   }
 
   @override
@@ -63,6 +70,7 @@ class _LoginPageState extends State<LoginPage> {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 40),
                     child: TextFormField(
+                      controller: _raController,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                         floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -82,6 +90,7 @@ class _LoginPageState extends State<LoginPage> {
                       style: TextStyle(
                         fontSize: 20,
                       ),
+                      onChanged: (_) => setState(() {}),
                     ),
                   ),
                   SizedBox(height: 30),
@@ -121,7 +130,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         suffixIcon: _passwordFocusNode.hasFocus
                             ? Padding(
-                                padding: const EdgeInsets.only(right: 3.0),
+                                padding: const EdgeInsets.only(right: 5.0),
                                 child: IconButton(
                                   icon: Icon(
                                     _passwordVisible
@@ -141,6 +150,7 @@ class _LoginPageState extends State<LoginPage> {
                       style: TextStyle(
                         fontSize: 20,
                       ),
+                      onChanged: (_) => setState(() {}),
                     ),
                   ),
                   SizedBox(height: 30),
@@ -151,7 +161,7 @@ class _LoginPageState extends State<LoginPage> {
                       height: 60,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 18, 129, 68),
+                        color: _isFormValid() ? Color.fromARGB(255, 18, 129, 68) : Color.fromARGB(135, 84, 118, 99),
                         borderRadius: BorderRadius.all(
                           Radius.circular(15),
                         ),
@@ -164,7 +174,7 @@ class _LoginPageState extends State<LoginPage> {
                             fontSize: 20,
                           ),
                         ),
-                        onPressed: () {},
+                        onPressed: _isFormValid() ? () {} : null,
                       ),
                     ),
                   ),
@@ -175,7 +185,7 @@ class _LoginPageState extends State<LoginPage> {
                       height: 40,
                       alignment: Alignment.center,
                       child: TextButton(
-                        child: Text("Recuperar Senha"),
+                        child: Text("Castrar nova senha"),
                         onPressed: () {},
                       ),
                     ),
