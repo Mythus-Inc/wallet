@@ -15,25 +15,31 @@ class CarteirinhaPage extends StatelessWidget {
       body: LayoutBuilder(
         builder: (context, constraints) {
           final double screenHeight = constraints.maxHeight;
-          final double appBarHeight = AppBar().preferredSize.height; // altura padrão do AppBar
-          final double footerHeight = 20.0; // Height of the Footer
-          final double additionalSpacing = 5.0; // espaço para adicionar os botões
-          final double carouselHeight = (screenHeight - appBarHeight - footerHeight - additionalSpacing);
+          final double appBarHeight = AppBar().preferredSize.height;
+          final double footerHeight = 40.0; // Adjust to match Footer height
+          final double additionalSpacing = 16.0; // Space between carousel and buttons
+          final double carouselHeight = screenHeight - appBarHeight - footerHeight - additionalSpacing - 50.0; // Adjusted for button height
 
-          return Container(
-            color: Colors.white, // Set the background color to match the carousel
-            child: Column(
-              children: [
-                Container(
-                  height: carouselHeight,
-                  child: Center(
-                    child: CarouselWidget(), // Carousel takes up the defined height
+          return Column(
+            children: [
+              Container(
+                height: carouselHeight,
+                child: CarouselWidget(), // Carousel takes up the defined height
+              ),
+              SizedBox(height: 50), // Space between carousel and buttons
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center, // Center buttons horizontally
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      // exportar para pdf
+                    },
+                    child: Text('Exportar para PDF'),
                   ),
-                ),
-                SizedBox(height: additionalSpacing), // Adds space between the carousel and footer
-                Spacer(), // Fills the remaining space to push the footer to the bottom
-              ],
-            ),
+                ],
+              ),
+              Spacer(), // Pushes the footer to the bottom
+            ],
           );
         },
       ),
@@ -49,12 +55,12 @@ class CarouselWidget extends StatelessWidget {
 
     return Container(
       width: screenWidth, // Set carousel width to screen width
-      color: Colors.white, // Set the same color as the background of the screen
+      color: Colors.white, 
       child: PageView(
         scrollDirection: Axis.horizontal,
         children: <Widget>[
-          _buildCarouselItem(Colors.white, 'Carteirinha'),
-          _buildCarouselItem(Colors.white, 'QR Code'),
+          _buildCarouselItem(Colors.blueAccent, 'Carteirinha'),
+          _buildCarouselItem(Colors.greenAccent, 'QR Code'),
         ],
       ),
     );
@@ -66,7 +72,7 @@ class CarouselWidget extends StatelessWidget {
       child: Center(
         child: Text(
           text,
-          style: TextStyle(color: Colors.black, fontSize: 24),
+          style: TextStyle(color: Colors.white, fontSize: 24),
         ),
       ),
     );
