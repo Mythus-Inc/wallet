@@ -1,9 +1,9 @@
 
 import 'package:flutter/material.dart';
-import 'package:wallet_mobile/widgets/biometric.dart';
+import 'package:wallet_mobile/pages/biometric_page.dart';
 class Routes {
   static Map<String, Widget Function(BuildContext)> list = <String, WidgetBuilder>{
-    '/biometric' : (_) => const Biometric(),
+    '/biometric' : (_) => const BiometricPage(),
     
   };
 

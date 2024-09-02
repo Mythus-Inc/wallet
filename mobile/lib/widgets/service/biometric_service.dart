@@ -3,6 +3,15 @@ import 'package:local_auth/local_auth.dart';
 class BiometricService { //utilizar extends ChangeNotifier quando for salvar um objeto
 
   final LocalAuthentication auth = LocalAuthentication();
+  
+  autenticar() async {
+    if (await isBiometricAvailable()){
+        await getListBiometricsTypes();
+        await authenticate();
+    
+    }
+  }
+
 
   Future<bool> isBiometricAvailable() async {
     try{
@@ -17,9 +26,9 @@ class BiometricService { //utilizar extends ChangeNotifier quando for salvar um 
     List<BiometricType> listBiometricType = await auth.getAvailableBiometrics();
   }
 
-  Future<bool> authenticate() async {
+  Future<bool> authenticate() async { // esse método pode causar uma exception, que deve ser corrigida
     return await auth.authenticate(
-      localizedReason: 'Por favor, autentique-se para acessar o app.',
+      localizedReason: 'Utilize a digital para acessar o app.',
       options: const AuthenticationOptions(
           biometricOnly: true,     
           useErrorDialogs: true,   
