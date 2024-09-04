@@ -1,6 +1,20 @@
 import 'package:flutter/material.dart';
 import '/components/footer.dart';
 
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false, // Aqui você desativa a bandeira de debug
+      home: LoginPage(),
+    );
+  }
+}
+
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
