@@ -8,7 +8,7 @@ class CarteirinhaPage extends StatelessWidget {
     // Example data for the first carousel item
     final Map<String, String> idInformation = {
       'nome': 'Carla Santos de Oliveira',
-      'curso': 'Engenharia de Sofware',
+      'curso': 'Engenharia de Software',
       'ra': '20220006500',
     };
 
@@ -42,10 +42,10 @@ class CarteirinhaPage extends StatelessWidget {
                       // Add functionality to export to PDF
                     },
                     child: Text('Exportar para PDF'),
-                  )
+                  ),
                 ],
               ),
-              Spacer(),
+              Spacer(), // Pushes the footer to the bottom
             ],
           );
         },
@@ -77,40 +77,37 @@ class CarouselWidget extends StatelessWidget {
     );
   }
 
-Widget _buildInfoItem(Map<String, String> info) {
-  return Container(
-    color: Colors.white,
-    padding: EdgeInsets.all(16.0),
-    child: Center(
-      child: RotatedBox(
-        quarterTurns: 3, // Rotate 270 degrees (90 degrees counterclockwise)
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center, // Centers the column vertically
-          crossAxisAlignment: CrossAxisAlignment.start,
-           // Aligns text to the left
-          children: [
-            Text(
-              '${info['nome']}',
-              style: TextStyle(color: Colors.black, fontSize: 24),
-            ),
-            SizedBox(height: 10),
-            Text(
-              'Curso: ${info['curso']}',
-              style: TextStyle(color: Colors.black, fontSize: 18),
-            ),
-            SizedBox(height: 10),
-            Text(
-              'RA: ${info['ra']}',
-              style: TextStyle(color: Colors.black, fontSize: 18),
-            ),
-          ],
+  Widget _buildInfoItem(Map<String, String> info) {
+    return Container(
+      color: Colors.blueAccent,
+      padding: EdgeInsets.all(16.0),
+      child: Center(
+        child: RotatedBox(
+          quarterTurns: 3, // Rotate 270 degrees (90 degrees counterclockwise)
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center, // Centers the column vertically
+            crossAxisAlignment: CrossAxisAlignment.start, // Aligns text to the left
+            children: [
+              Text(
+                '${info['nome']}',
+                style: TextStyle(color: Colors.white, fontSize: 24),
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Curso: ${info['curso']}',
+                style: TextStyle(color: Colors.white, fontSize: 18),
+              ),
+              SizedBox(height: 10),
+              Text(
+                'RA: ${info['ra']}',
+                style: TextStyle(color: Colors.white, fontSize: 18),
+              ),
+            ],
+          ),
         ),
       ),
-    ),
-  );
-}
-
-
+    );
+  }
 
   Widget _buildQRCodeItem() {
     return Container(
@@ -119,10 +116,7 @@ Widget _buildInfoItem(Map<String, String> info) {
         child: Container(
           width: 500.0,  // Increase the width
           height: 500.0, // Increase the height
-          color: Colors.white,
-          child: Center(
-            child: Icon(Icons.qr_code, size: 250, color: Colors.black), // Make the QR code icon larger
-          ),
+          child: Icon(Icons.qr_code, size: 250, color: Colors.black), // Make the QR code icon larger
         ),
       ),
     );
