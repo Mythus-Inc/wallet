@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
 
 class BiometricService { //utilizar extends ChangeNotifier quando for salvar um objeto
@@ -27,13 +28,19 @@ class BiometricService { //utilizar extends ChangeNotifier quando for salvar um 
   }
 
   Future<bool> authenticate() async { // esse método pode causar uma exception, que deve ser corrigida
-    return await auth.authenticate(
-      localizedReason: 'Utilize a digital para acessar o app.',
-      options: const AuthenticationOptions(
-          biometricOnly: true,     
-          useErrorDialogs: true,   
-          stickyAuth: true,        
-      ),
-    ); 
+    bool auxAuthenticated = false;
+    try{
+        auxAuthenticated = await auth.authenticate(
+        localizedReason: 'Utilize a digital para acessar o app.',
+        options: const AuthenticationOptions(
+            biometricOnly: true,     
+            useErrorDialogs: true,   
+            stickyAuth: true,        
+        ),
+      ); 
+    } on PlatformException catch(e) {
+      print(e);
+    }
+    return auxAuthenticated;
   }
 }
