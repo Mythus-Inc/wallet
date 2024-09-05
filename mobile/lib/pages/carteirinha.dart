@@ -230,6 +230,23 @@ class CarouselWidget extends StatelessWidget {
                   ),
                 ),
               ),
+              Positioned(
+                top: 170, // Adjust this to move the placeholder vertically
+                left: 320, // Adjust this to move the placeholder horizontally
+                child: Container(
+                  width: 150, // Width of the placeholder
+                  height: 200, // Height of the placeholder
+                  color:
+                      Colors.grey[300], // Background color of the placeholder
+                  child: Center(
+                    child: Icon(
+                      Icons.image, // Icon representing the image placeholder
+                      color: Colors.grey[700],
+                      size: 50, // Size of the icon
+                    ),
+                  ),
+                ),
+              ),
               Padding(
                 padding: EdgeInsets.only(
                     left: 25.0,
