@@ -51,6 +51,14 @@ class _LoginPageState extends State<LoginPage> {
     return _raController.text.isNotEmpty && _userPasswordController.text.isNotEmpty;
   }
 
+  Future<void> enter() async {
+    if (_raController.text.isNotEmpty && _userPasswordController.text.isNotEmpty) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => Home()),
+      );
+    } 
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -215,7 +223,8 @@ class _LoginPageState extends State<LoginPage> {
                             fontSize: 20,
                           ),
                         ),
-                        onPressed: _isFormValid() ? () {} : null,
+                        onPressed: (){enter();},
+                        
                       ),
                     ),
                   ),
