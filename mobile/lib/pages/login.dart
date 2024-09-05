@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:wallet_mobile/pages/home.dart';
+import 'package:wallet_mobile/widgets/service/biometric_service.dart';
 import '/components/footer.dart';
 
 class LoginPage extends StatefulWidget {
@@ -12,10 +14,14 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _userPasswordController = TextEditingController();
   final TextEditingController _raController = TextEditingController();
   final FocusNode _passwordFocusNode = FocusNode();
+  late BiometricService biometricService;
+  bool isAuthenticated = false;
 
   @override
   void initState() {
     super.initState();
+    biometricService = BiometricService();
+    
     _passwordFocusNode.addListener(() {
       setState(() {
         // Mostra o ícone apenas quando o campo de senha está em foco
@@ -30,6 +36,15 @@ class _LoginPageState extends State<LoginPage> {
     _userPasswordController.dispose();
     _raController.dispose();
     super.dispose();
+  }
+
+  Future<void> authenticateUser() async {
+    isAuthenticated = await biometricService.authenticate();
+    if (isAuthenticated) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => Home()),
+      );
+    } 
   }
 
   bool _isFormValid() {
@@ -169,6 +184,10 @@ class _LoginPageState extends State<LoginPage> {
                           onChanged: (bool value) {
                             setState(() {
                               _rememberMe = value;
+                              if(_rememberMe){
+                                biometricService.autenticar();
+                                authenticateUser();
+                              }
                             });
                           },
                         ),

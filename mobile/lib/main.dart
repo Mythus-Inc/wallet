@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import './pages/login.dart';
-import 'package:wallet_mobile/pages/biometric_page.dart';
 
 void main() {
   runApp(const MyApp());
