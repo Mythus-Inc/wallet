@@ -1,26 +1,13 @@
 import 'package:flutter/material.dart';
 import '/components/footer.dart';
 
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false, // Aqui você desativa a bandeira de debug
-      home: LoginPage(),
-    );
-  }
-}
-
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
+  bool _rememberMe = false;
   bool _passwordVisible = false;
   final TextEditingController _userPasswordController = TextEditingController();
   final TextEditingController _raController = TextEditingController();
@@ -119,7 +106,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       textAlign: TextAlign.left,
                     ),
-                  ),
+                  ),                 
                   // Padding Senha
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 40),
@@ -167,7 +154,28 @@ class _LoginPageState extends State<LoginPage> {
                       onChanged: (_) => setState(() {}),
                     ),
                   ),
-                  SizedBox(height: 30),
+                  SizedBox(height: 20),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 40),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Login com biometria",
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        Switch(
+                          value: _rememberMe,
+                          onChanged: (bool value) {
+                            setState(() {
+                              _rememberMe = value;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 20),
                   // Padding Acessar
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 40),
@@ -203,7 +211,7 @@ class _LoginPageState extends State<LoginPage> {
                         onPressed: () {},
                       ),
                     ),
-                  ),
+                  ),                  
                 ],
               ),
             ),
