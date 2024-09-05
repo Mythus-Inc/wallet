@@ -218,6 +218,18 @@ class CarouselWidget extends StatelessWidget {
                   ),
                 ),
               ),
+              Positioned(
+                top: 20, // Adjust this to move the text vertically
+                left: 385, // Adjust this to move the text horizontally
+                child: Text(
+                  'IDENTIDADE\nESTUDANTIL', // Your new text
+                  style: TextStyle(
+                    fontSize: 19,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
               Padding(
                 padding: EdgeInsets.only(
                     left: 25.0,
