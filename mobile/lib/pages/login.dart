@@ -8,6 +8,7 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
+// Adiciona biometria
 class _LoginPageState extends State<LoginPage> {
   bool _rememberMe = false;
   bool _passwordVisible = false;
