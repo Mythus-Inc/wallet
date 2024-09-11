@@ -9,7 +9,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: CarteirinhaPage(), // Defina CarteirinhaPage como home
+      home: CarteirinhaPage(),
+      debugShowCheckedModeBanner: false, // Defina CarteirinhaPage como home
     );
   }
 }
