@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wallet_mobile/pages/login.dart';
 import '../components/header.dart';
 import '../components/footer.dart';
 
@@ -7,9 +8,9 @@ class CarteirinhaPage extends StatelessWidget {
   Widget build(BuildContext context) {
     // Example data for the first carousel item
     final Map<String, String> idInformation = {
-      'nome': 'Carla Santos de Oliveira',
+      'nome': 'Renato Augusto Platz Guimarães Neto',
       'curso': 'Engenharia de Software',
-      'ra': '20220006519',
+      'ra': '20220000000',
       'ingresso': '2022',
       'validade': '12/2025',
     };
@@ -18,7 +19,9 @@ class CarteirinhaPage extends StatelessWidget {
       appBar: Header(
         title: 'Wallet - IFPR',
         onBackPressed: () {
-          Navigator.of(context).pop();
+          Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => LoginPage()),
+      );
         },
       ),
       body: LayoutBuilder(
