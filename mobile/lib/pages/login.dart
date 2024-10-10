@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wallet_mobile/pages/carteirinha.dart';
+import 'package:wallet_mobile/pages/cadastro.dart';
 import 'package:wallet_mobile/widgets/service/biometric_service.dart';
 import '/components/footer.dart';
 
@@ -236,8 +237,12 @@ class _LoginPageState extends State<LoginPage> {
                       height: 40,
                       alignment: Alignment.center,
                       child: TextButton(
-                        child: Text("Castrar nova senha"),
-                        onPressed: () {},
+                        child: Text("Cadastrar nova senha"),
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) => CadastroPage()),
+                          );
+                        },
                       ),
                     ),
                   ),                  
