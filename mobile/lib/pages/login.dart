@@ -79,7 +79,7 @@ class _LoginPageState extends State<LoginPage> {
                     height: 180,
                     child: Image.asset("assets/app/ifprlogo.png"),
                   ),
-                  SizedBox(height: 100),
+                  SizedBox(height: 60),
                   // Padding RA
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 40),
