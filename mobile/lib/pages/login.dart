@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wallet_mobile/pages/carteirinha.dart';
+import 'package:wallet_mobile/pages/dados.dart';
 import 'package:wallet_mobile/widgets/service/biometric_service.dart';
 import '/components/footer.dart';
 
@@ -43,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
     isAuthenticated = await biometricService.authenticate();
     if (isAuthenticated) {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => CarteirinhaPage()),
+        MaterialPageRoute(builder: (context) => Dados()),
       );
     } 
   }
@@ -55,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> enter() async {
     if (_raController.text.isNotEmpty && _userPasswordController.text.isNotEmpty) {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => CarteirinhaPage()),
+        MaterialPageRoute(builder: (context) => Dados()),
       );
     } 
   }

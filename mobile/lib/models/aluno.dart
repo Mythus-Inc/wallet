@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wallet_mobile/values/preferences_key.dart';
 
 class Aluno {
   String? nome;
@@ -9,8 +10,9 @@ class Aluno {
   int? ra;
   String? ingresso;
   String? validade;
+  String? senha;
 
-  Aluno({this.nome, this.curso, this.ra, this.ingresso, this.validade});
+  Aluno({this.nome, this.curso, this.ra, this.ingresso, this.validade, this.senha});
 
   Aluno.fromJson(Map<String, dynamic> json) {
     nome = json['nome'];
@@ -18,6 +20,7 @@ class Aluno {
     ra = json['ra'];
     ingresso = json['ingresso'];
     validade = json['validade'];
+    senha = json['senha'];
   }
 
   Map<String, dynamic> toJson() {
@@ -27,12 +30,13 @@ class Aluno {
     data['ra'] = this.ra;
     data['ingresso'] = this.ingresso;
     data['validade'] = this.validade;
+    data['senha'] = this.senha;
     return data;
   }
 
-  void _salvarAluno(Aluno aluno) async {
+  static void salvarAluno(Aluno aluno) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString("KEY_ACESSAR_OU_SOBREESCREVER", json.encode(aluno.toJson()));
+    prefs.setString(PreferencesKey.chaveAcessoOuSobreewscrita, json.encode(aluno.toJson()));
   }
 
 }
