@@ -14,7 +14,7 @@ class Aluno {
 
   Aluno({this.nome, this.curso, this.ra, this.ingresso, this.validade, this.senha});
 
-  Aluno.fromJson(Map<String, dynamic> json) {
+   Aluno.fromJson(Map<String, dynamic> json) {
     nome = json['nome'];
     curso = json['curso'];
     ra = json['ra'];
@@ -32,11 +32,6 @@ class Aluno {
     data['validade'] = this.validade;
     data['senha'] = this.senha;
     return data;
-  }
-
-  static void salvarAluno(Aluno aluno) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(PreferencesKey.chaveAcessoOuSobreewscrita, json.encode(aluno.toJson()));
   }
 
 }
