@@ -1,4 +1,7 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:wallet_mobile/dto/dto_aluno_login.dart';
 import 'package:wallet_mobile/pages/carteirinha.dart';
 import 'package:wallet_mobile/widgets/service/biometric_service.dart';
 import '/components/footer.dart';
@@ -48,12 +51,30 @@ class _LoginPageState extends State<LoginPage> {
     } 
   }
 
+  Future<bool> requisicaoDeAcessoCronos(DtoalunoLogin dto) async{
+    String corpoRequisicao = json.encode(dto.toJson());
+    var chamdaBackEnd = await http.post(
+
+      Uri.parse('https://cronos/alunos'), // aqui deve ser passada a url do cronos !!
+      headers: {'Content-Type': 'application/json'},
+      body: corpoRequisicao,
+    );
+
+    if (chamdaBackEnd.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   bool _isFormValid() {
     return _raController.text.isNotEmpty && _userPasswordController.text.isNotEmpty;
   }
 
   Future<void> enter() async {
     if (_raController.text.isNotEmpty && _userPasswordController.text.isNotEmpty) {
+      DtoalunoLogin alunoDto = DtoalunoLogin(ra: _raController.text);
+      requisicaoDeAcessoCronos(alunoDto);
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => CarteirinhaPage()),
       );
