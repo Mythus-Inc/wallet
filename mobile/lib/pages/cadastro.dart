@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:wallet_mobile/components/footer.dart';
 
 class CadastroPage extends StatefulWidget {
@@ -15,10 +17,13 @@ class _CadastroPageState extends State<CadastroPage> {
   bool _passwordVisible = false;
   bool _confirmPasswordVisible = false;
 
+  File? _imageFile;
+  final ImagePicker _picker = ImagePicker();
+
   @override
   void initState() {
     super.initState();
-    
+
     _passwordFocusNode.addListener(() {
       setState(() {
         _passwordVisible = _passwordFocusNode.hasFocus ? false : _passwordVisible;
@@ -41,6 +46,54 @@ class _CadastroPageState extends State<CadastroPage> {
     super.dispose();
   }
 
+  pick(ImageSource source) async {
+    final pickedFile = await _picker.pickImage(source: source);
+
+    if (pickedFile != null){
+      setState(() {
+      _imageFile = File(pickedFile.path);
+      });
+    }
+  }
+
+  void _removeImage() {
+    setState(() {
+      _imageFile = null;
+    });
+  }
+
+  void _showAvatarOptions(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Opções de Avatar"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Icon(Icons.camera_alt),
+                title: Text("Tirar uma nova foto"),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  pick(ImageSource.camera); 
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.delete),
+                title: Text("Remover foto"),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _removeImage();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,12 +111,15 @@ class _CadastroPageState extends State<CadastroPage> {
               child: ListView(
                 children: <Widget>[
                   SizedBox(height: 20),
-                  SizedBox(
-                    width: 180,
-                    height: 180,
-                    child: Image.asset("assets/app/ifprlogo.png"),
+                  GestureDetector(
+                    onTap: () => _showAvatarOptions(context),
+                    child: CircleAvatar(
+                      radius: 60,
+                      backgroundColor: Colors.grey[300],
+                      backgroundImage: _imageFile != null ? FileImage(_imageFile!) : null,
+                    ),
                   ),
-                  SizedBox(height: 60),
+                  SizedBox(height: 20),
                   // Padding RA
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 40),
