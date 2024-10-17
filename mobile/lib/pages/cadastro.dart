@@ -67,7 +67,7 @@ class _CadastroPageState extends State<CadastroPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Opções de Avatar"),
+          title: Text("Tirar Foto"),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -112,13 +112,24 @@ class _CadastroPageState extends State<CadastroPage> {
                 children: <Widget>[
                   SizedBox(height: 20),
                   GestureDetector(
-                    onTap: () => _showAvatarOptions(context),
-                    child: CircleAvatar(
-                      radius: 60,
-                      backgroundColor: Colors.grey[300],
-                      backgroundImage: _imageFile != null ? FileImage(_imageFile!) : null,
-                    ),
+                  onTap: () => _showAvatarOptions(context),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      CircleAvatar(
+                        radius: 60,
+                        backgroundColor: Colors.grey[300],
+                        backgroundImage: _imageFile != null ? FileImage(_imageFile!) : null,
+                      ),
+                      if (_imageFile == null) 
+                        Icon(
+                          Icons.camera_alt,
+                          color: Colors.grey[700], 
+                          size: 32, 
+                        ),
+                    ],
                   ),
+                ),
                   SizedBox(height: 20),
                   // Padding RA
                   Padding(
