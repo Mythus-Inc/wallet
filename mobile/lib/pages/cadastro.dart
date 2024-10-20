@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:wallet_mobile/components/footer.dart';
+import 'package:wallet_mobile/pages/login.dart';
 
 class CadastroPage extends StatefulWidget {
   @override
@@ -76,7 +77,7 @@ class _CadastroPageState extends State<CadastroPage> {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Center( // Centraliza o título
+        title: Center( 
           child: Text("Adicionar foto"),
         ),
         content: Column(
@@ -90,7 +91,7 @@ class _CadastroPageState extends State<CadastroPage> {
                 color: const Color.fromARGB(238, 0, 0, 0),
               ),
             ),
-            SizedBox(height: 10), // Espaço entre o texto e as opções
+            SizedBox(height: 10),
             ListTile(
               leading: Icon(Icons.camera_alt),
               title: Text("Tirar uma nova foto"),
@@ -117,38 +118,86 @@ class _CadastroPageState extends State<CadastroPage> {
 
 
   // Função para enviar os dados para o servidor
-  void _solicitarCadastro() async {
-    if (_isFormValid()) {
-      try {
-        // Prepara os dados para envio
-        var uri = Uri.parse('https://example.com/cadastro'); // Substituir pelo endpoint
-        var request = http.MultipartRequest('POST', uri);
+  void _requestRegistration() async {
+  if (_isFormValid()) {
+    try {
+      // Prepara os dados para envio
+      var uri = Uri.parse('https://example.com/cadastro'); // Substituir pelo endpoint real
+      var request = http.MultipartRequest('POST', uri);
 
-        // Adiciona RA e Senha
-        request.fields['ra'] = _raController.text;
-        request.fields['senha'] = _userPasswordController.text;
+      // Adiciona RA e Senha
+      request.fields['ra'] = _raController.text;
+      request.fields['senha'] = _userPasswordController.text;
 
-        // Adiciona a imagem, se existir
-        if (_imageFile != null) {
-          request.files.add(await http.MultipartFile.fromPath('foto', _imageFile!.path));
-        }
-
-        // Envia a requisição
-        var response = await request.send();
-
-        // Verifica a resposta
-        if (response.statusCode == 200) {
-          var responseData = await http.Response.fromStream(response);
-          var jsonResponse = jsonDecode(responseData.body);
-          print("Cadastro realizado com sucesso: $jsonResponse");
-        } else {
-          print("Erro ao solicitar cadastro: ${response.statusCode}");
-        }
-      } catch (error) {
-        print("Erro na requisição: $error");
+      // Adiciona a imagem, se existir
+      if (_imageFile != null) {
+        request.files.add(await http.MultipartFile.fromPath('foto', _imageFile!.path));
       }
+
+      _showSuccessDialog();
+      
+
+      // Envia a requisição
+      // var response = await request.send();
+
+      // Verifica a resposta
+      // if (response.statusCode == 200) {
+      //   var responseData = await http.Response.fromStream(response);
+      //   var jsonResponse = jsonDecode(responseData.body);
+      //   print("Cadastro realizado com sucesso: $jsonResponse");
+
+      //   // Exibe a caixa de diálogo de sucesso
+      //   _showSuccessDialog();
+      // } else {
+      //   print("Erro ao solicitar cadastro: ${response.statusCode}");
+      // }
+
+
+    } catch (error) {
+      print("Erro na requisição: $error");
     }
   }
+}
+
+void _showSuccessDialog() {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Center(
+          child: Text("Solicitação de cadastro efetuada com sucesso!"),
+        ),
+        actions: <Widget>[
+          Center( 
+            child: TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: Color.fromARGB(255, 18, 129, 68), 
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), 
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8), 
+                ),
+              ),
+              child: Text(
+                "OK",
+                style: TextStyle(
+                  color: Colors.white, 
+                  fontSize: 18, 
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => LoginPage()),
+                ); 
+              },
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -357,7 +406,7 @@ class _CadastroPageState extends State<CadastroPage> {
                             fontSize: 20,
                           ),
                         ),
-                        onPressed: _solicitarCadastro, // Chama o método de requisição
+                        onPressed: _requestRegistration,  
                       ),
                     ),
                   ),
