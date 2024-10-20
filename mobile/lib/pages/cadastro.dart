@@ -72,36 +72,49 @@ class _CadastroPageState extends State<CadastroPage> {
   }
 
   void _showAvatarOptions(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Tirar Foto"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: Icon(Icons.camera_alt),
-                title: Text("Tirar uma nova foto"),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  pick(ImageSource.camera); 
-                },
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Center( // Centraliza o título
+          child: Text("Adicionar foto"),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              "•Tire uma foto do próprio rosto, de preferência atrás de uma parede branca;\n\n"
+              "•Retire óculos, chapéu e qualquer outro acessório que cubra seu rosto.",
+              style: TextStyle(
+                fontSize: 14, 
+                color: const Color.fromARGB(238, 0, 0, 0),
               ),
-              ListTile(
-                leading: Icon(Icons.delete),
-                title: Text("Remover foto"),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  _removeImage();
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
+            ),
+            SizedBox(height: 10), // Espaço entre o texto e as opções
+            ListTile(
+              leading: Icon(Icons.camera_alt),
+              title: Text("Tirar uma nova foto"),
+              onTap: () {
+                Navigator.of(context).pop();
+                pick(ImageSource.camera); 
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.delete),
+              title: Text("Remover foto"),
+              onTap: () {
+                Navigator.of(context).pop();
+                _removeImage();
+              },
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+
 
   // Função para enviar os dados para o servidor
   void _solicitarCadastro() async {
