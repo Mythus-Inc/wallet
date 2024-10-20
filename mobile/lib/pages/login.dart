@@ -52,20 +52,48 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<bool> requisicaoDeAcessoCronos(DtoalunoLogin dto) async{
-    String corpoRequisicao = json.encode(dto.toJson());
+    Map<String, dynamic> corpoRequisicao =  dto.toJson();
+    String jsonBody = jsonEncode(corpoRequisicao);
+    var url = Uri.parse('http://192.168.0.101:8080/cronos/rest/service/solicitacao-carteirinha');
     var chamdaBackEnd = await http.post(
-
-      Uri.parse('https://cronos/alunos'), // aqui deve ser passada a url do cronos !!
+      url, // aqui deve ser passada a url do cronos !!
       headers: {'Content-Type': 'application/json'},
-      body: corpoRequisicao,
+      body: jsonBody,
     );
 
     if (chamdaBackEnd.statusCode == 200) {
+      print("Requisição efetuada com sucesso");
       return true;
     } else {
+      print("Requisição falhou");
       return false;
     }
   }
+
+  Future<DtoalunoLogin> solicitarValidacaoCarteirinha() async {
+    // URL do seu backend
+    var url = Uri.parse('http://192.168.0.101:8080/cronos/rest/service/solicitacao-carteirinha/validacao');
+
+    // Fazendo a requisição POST (sem corpo, pois o método no backend não espera dados no corpo)
+    var response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json; charset=UTF-8'},
+    );
+
+    // Verificando se a requisição foi bem-sucedida
+    if (response.statusCode == 200) {
+      // Decodificando o corpo da resposta JSON
+      Map<String, dynamic> jsonData = jsonDecode(response.body);
+
+      // Convertendo o JSON para o objeto DtoalunoLogin
+      return DtoalunoLogin.fromJson(jsonData);
+    } else {
+      // Se houve erro, lança uma exceção
+      throw Exception('Falha ao validar carteirinha: ${response.statusCode}');
+    }
+  }
+
+
 
   bool _isFormValid() {
     return _raController.text.isNotEmpty && _userPasswordController.text.isNotEmpty;
@@ -74,7 +102,7 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> enter() async {
     if (_raController.text.isNotEmpty && _userPasswordController.text.isNotEmpty) {
       DtoalunoLogin alunoDto = DtoalunoLogin(ra: _raController.text);
-      requisicaoDeAcessoCronos(alunoDto);
+      await requisicaoDeAcessoCronos(alunoDto);
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => CarteirinhaPage()),
       );
