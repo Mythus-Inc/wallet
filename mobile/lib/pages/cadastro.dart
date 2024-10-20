@@ -1,6 +1,8 @@
 import 'dart:io';
+import 'dart:convert'; 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
 import 'package:wallet_mobile/components/footer.dart';
 
 class CadastroPage extends StatefulWidget {
@@ -37,6 +39,13 @@ class _CadastroPageState extends State<CadastroPage> {
     });
   }
 
+  bool _isFormValid() {
+    return _userPasswordController.text.isNotEmpty && 
+           _confirmUserPasswordController.text.isNotEmpty && 
+           _raController.text.isNotEmpty && 
+           _imageFile != null;
+  }
+
   @override
   void dispose() {
     _passwordFocusNode.dispose();
@@ -49,9 +58,9 @@ class _CadastroPageState extends State<CadastroPage> {
   pick(ImageSource source) async {
     final pickedFile = await _picker.pickImage(source: source);
 
-    if (pickedFile != null){
+    if (pickedFile != null) {
       setState(() {
-      _imageFile = File(pickedFile.path);
+        _imageFile = File(pickedFile.path);
       });
     }
   }
@@ -94,6 +103,40 @@ class _CadastroPageState extends State<CadastroPage> {
     );
   }
 
+  // Função para enviar os dados para o servidor
+  void _solicitarCadastro() async {
+    if (_isFormValid()) {
+      try {
+        // Prepara os dados para envio
+        var uri = Uri.parse('https://example.com/cadastro'); // Substituir pelo endpoint
+        var request = http.MultipartRequest('POST', uri);
+
+        // Adiciona RA e Senha
+        request.fields['ra'] = _raController.text;
+        request.fields['senha'] = _userPasswordController.text;
+
+        // Adiciona a imagem, se existir
+        if (_imageFile != null) {
+          request.files.add(await http.MultipartFile.fromPath('foto', _imageFile!.path));
+        }
+
+        // Envia a requisição
+        var response = await request.send();
+
+        // Verifica a resposta
+        if (response.statusCode == 200) {
+          var responseData = await http.Response.fromStream(response);
+          var jsonResponse = jsonDecode(responseData.body);
+          print("Cadastro realizado com sucesso: $jsonResponse");
+        } else {
+          print("Erro ao solicitar cadastro: ${response.statusCode}");
+        }
+      } catch (error) {
+        print("Erro na requisição: $error");
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -112,26 +155,26 @@ class _CadastroPageState extends State<CadastroPage> {
                 children: <Widget>[
                   SizedBox(height: 20),
                   GestureDetector(
-                  onTap: () => _showAvatarOptions(context),
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      CircleAvatar(
-                        radius: 60,
-                        backgroundColor: Colors.grey[300],
-                        backgroundImage: _imageFile != null ? FileImage(_imageFile!) : null,
-                      ),
-                      if (_imageFile == null) 
-                        Icon(
-                          Icons.camera_alt,
-                          color: Colors.grey[700], 
-                          size: 32, 
+                    onTap: () => _showAvatarOptions(context),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        CircleAvatar(
+                          radius: 60,
+                          backgroundColor: Colors.grey[300],
+                          backgroundImage: _imageFile != null ? FileImage(_imageFile!) : null,
                         ),
-                    ],
+                        if (_imageFile == null) 
+                          Icon(
+                            Icons.camera_alt,
+                            color: Colors.grey[700], 
+                            size: 32, 
+                          ),
+                      ],
+                    ),
                   ),
-                ),
                   SizedBox(height: 20),
-                  // Padding RA
+                  // Campo R.A.
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 40),
                     child: Text(
@@ -168,7 +211,7 @@ class _CadastroPageState extends State<CadastroPage> {
                     ),
                   ),
                   SizedBox(height: 30),
-                  // Padding Senha
+                  // Campo Senha
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 40),
                     child: Text(
@@ -225,6 +268,7 @@ class _CadastroPageState extends State<CadastroPage> {
                     ),
                   ),
                   SizedBox(height: 20),
+                  // Campo Confirmar Senha
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 40),
                     child: Text(
@@ -269,7 +313,8 @@ class _CadastroPageState extends State<CadastroPage> {
                                   ),
                                   onPressed: () {
                                     setState(() {
-                                      _confirmPasswordVisible = !_confirmPasswordVisible;
+                                      _confirmPasswordVisible =
+                                          !_confirmPasswordVisible;
                                     });
                                   },
                                 ),
@@ -280,7 +325,29 @@ class _CadastroPageState extends State<CadastroPage> {
                       onChanged: (_) => setState(() {}),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 40),
+                  // Botão "Solicitar Cadastro"
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 40),
+                    child: Container(
+                      height: 60,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: _isFormValid() ? Color.fromARGB(255, 18, 129, 68) : Color.fromARGB(135, 84, 118, 99),
+                      ),
+                      child: TextButton(
+                        child: Text(
+                          "Solicitar Cadastro",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                          ),
+                        ),
+                        onPressed: _solicitarCadastro, // Chama o método de requisição
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
