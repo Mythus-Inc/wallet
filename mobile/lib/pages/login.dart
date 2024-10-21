@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:wallet_mobile/dto/dto_aluno_login.dart';
 import 'package:wallet_mobile/pages/carteirinha.dart';
 import 'package:wallet_mobile/pages/cadastro.dart';
+import 'package:wallet_mobile/service/aluno_service.dart';
 import 'package:wallet_mobile/widgets/service/biometric_service.dart';
 import '/components/footer.dart';
 
@@ -54,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
 
   
 
-  Future<DtoalunoLogin> solicitarValidacaoCarteirinha() async {
+  Future<bool> solicitarValidacaoCarteirinha() async {
   
     var url = Uri.parse('http://192.168.0.101:8080/cronos/rest/service/solicitacao-carteirinha/validada');
     var response = await http.get(
@@ -64,8 +65,9 @@ class _LoginPageState extends State<LoginPage> {
 
     if (response.statusCode == 200) {
       Map<String, dynamic> jsonData = jsonDecode(response.body);
-      return DtoalunoLogin.fromJson(jsonData);
-      
+      DtoalunoLogin alunoDto = DtoalunoLogin.fromJson(jsonData);
+      AlunoService.salvarAluno(alunoDto);
+      return true;
     } else {
       throw Exception('Falha ao validar carteirinha: ${response.statusCode}');
     }
@@ -79,11 +81,33 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> enter() async {
     if (_raController.text.isNotEmpty && _userPasswordController.text.isNotEmpty) {
-      //DtoalunoLogin alunoDto = DtoalunoLogin(ra: _raController.text);
-      await solicitarValidacaoCarteirinha();
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => CarteirinhaPage()),
-      );
+      bool ehValidaACarteirinha  = await solicitarValidacaoCarteirinha();
+      // aqui se o método retornar um aluno dto, ele navega para  a carteirinha page, caso contrário ele aparecerá um pop up dizedo que não pode prosseguir
+      
+      if(ehValidaACarteirinha == true){
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => CarteirinhaPage()),
+        );
+      }else{
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Carteirinha não validada'),
+              content: Text('Sua carteirinha ainda não foi validada. Por favor, aguarde a liberação da secretaria.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Fecha o pop-up
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      }
+      
     } 
   }
 
