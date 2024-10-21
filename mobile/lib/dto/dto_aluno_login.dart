@@ -2,10 +2,10 @@ import 'package:wallet_mobile/models/aluno.dart';
 
 class DtoalunoLogin{
   final String ra;
-  final String? nome;
-  final String? email;
-  final String? senha;
-  final List<String>? alunoTurma;
+  String? nome;
+  String? email;
+  String? senha;
+  List<String>? alunoTurma;
 
 
  DtoalunoLogin({
