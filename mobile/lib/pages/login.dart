@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:wallet_mobile/dto/dto_aluno_login.dart';
 import 'package:wallet_mobile/pages/carteirinha.dart';
+import 'package:wallet_mobile/pages/cadastro.dart';
 import 'package:wallet_mobile/widgets/service/biometric_service.dart';
 import '/components/footer.dart';
 
@@ -121,7 +122,7 @@ class _LoginPageState extends State<LoginPage> {
                     height: 180,
                     child: Image.asset("assets/app/ifprlogo.png"),
                   ),
-                  SizedBox(height: 100),
+                  SizedBox(height: 20),
                   // Padding RA
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 40),
@@ -279,8 +280,12 @@ class _LoginPageState extends State<LoginPage> {
                       height: 40,
                       alignment: Alignment.center,
                       child: TextButton(
-                        child: Text("Castrar nova senha"),
-                        onPressed: () {},
+                        child: Text("Cadastrar nova senha"),
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) => CadastroPage()),
+                          );
+                        },
                       ),
                     ),
                   ),                  
