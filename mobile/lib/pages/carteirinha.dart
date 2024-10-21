@@ -31,13 +31,16 @@ class CarteirinhaPage extends StatelessWidget {
           } else if (snapshot.hasData && snapshot.data != null) {
             // Quando os dados forem carregados, atualize o idInformation
             final DtoalunoLogin aluno = snapshot.data!;
-
+            final String curso = (aluno.alunoTurma != null && aluno.alunoTurma!.isNotEmpty) ? aluno.alunoTurma!.first.curso ?? 'Curso não disponível' : 'Curso não disponível';
+            final String ingresso = (aluno.alunoTurma != null && aluno.alunoTurma!.isNotEmpty) ? aluno.alunoTurma!.first.dataMatricula ?? 'data da matricula não disponível' : 'data da matricula não disponível';
+            final String validade = (aluno.alunoTurma != null && aluno.alunoTurma!.isNotEmpty) ? aluno.alunoTurma!.first.validade ?? 'data da validade não disponível' : 'data da validade não disponível';
+            
             final Map<String, String> idInformation = {
               'nome': aluno.nome ?? 'Nome não disponível',
-              'curso': 'Curso não disponível',
-              'ra': aluno.ra ?? 'RA não disponível',
-              'ingresso': 'Ano de ingresso não disponível',
-              'validade': 'Validade não disponível',
+              'curso': curso,
+              'ra': aluno.ra,
+              'ingresso': ingresso,
+              'validade': validade,
             };
 
             // Aqui construa o layout da página com os dados do aluno
@@ -219,7 +222,7 @@ class CarouselWidget extends StatelessWidget {
                         BorderRadius.circular(8), // Optional: add border radius
                     image: DecorationImage(
                       image: AssetImage(
-                          '../assets/app/ifprLogo.png'), // Replace with your image path
+                          './assets/app/ifprLogo.png'), // Replace with your image path
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -236,7 +239,7 @@ class CarouselWidget extends StatelessWidget {
                         BorderRadius.circular(8), // Optional: add border radius
                     image: DecorationImage(
                       image: AssetImage(
-                          '../assets/app/brasao.png'), // Replace with your image path
+                          './assets/app/brasao.png'), // Replace with your image path
                       fit: BoxFit.contain,
                     ),
                   ),

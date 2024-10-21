@@ -1,3 +1,4 @@
+import 'package:wallet_mobile/dto/dto_aluno_turma.dart';
 import 'package:wallet_mobile/models/aluno.dart';
 
 class DtoalunoLogin{
@@ -5,7 +6,8 @@ class DtoalunoLogin{
   String? nome;
   String? email;
   String? senha;
-  List<String>? alunoTurma;
+  
+  List<DtoAlunoTurma>? alunoTurma;
 
 
  DtoalunoLogin({
@@ -22,7 +24,7 @@ class DtoalunoLogin{
       'nome': nome,
       'email': email,
       'senha': senha,
-      'alunoTurma': []
+      'alunoTurma': alunoTurma?.map((turma) => turma.toJson()).toList() ?? []
     };
   }
 
@@ -32,6 +34,9 @@ class DtoalunoLogin{
       email: json['email'],
       senha: json['senha'],
       ra: json['ra'],
+      alunoTurma: (json['alunoTurma'] as List<dynamic>?)
+          ?.map((turma) => DtoAlunoTurma.fromJson(turma))
+          .toList(),
     );
   }
 }
