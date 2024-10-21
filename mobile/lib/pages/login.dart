@@ -71,24 +71,18 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<DtoalunoLogin> solicitarValidacaoCarteirinha() async {
-    // URL do seu backend
-    var url = Uri.parse('http://192.168.0.101:8080/cronos/rest/service/solicitacao-carteirinha/validacao');
-
-    // Fazendo a requisição POST (sem corpo, pois o método no backend não espera dados no corpo)
-    var response = await http.post(
+  
+    var url = Uri.parse('http://192.168.0.101:8080/cronos/rest/service/solicitacao-carteirinha/validada');
+    var response = await http.get(
       url,
       headers: {'Content-Type': 'application/json; charset=UTF-8'},
     );
 
-    // Verificando se a requisição foi bem-sucedida
     if (response.statusCode == 200) {
-      // Decodificando o corpo da resposta JSON
       Map<String, dynamic> jsonData = jsonDecode(response.body);
-
-      // Convertendo o JSON para o objeto DtoalunoLogin
       return DtoalunoLogin.fromJson(jsonData);
+      
     } else {
-      // Se houve erro, lança uma exceção
       throw Exception('Falha ao validar carteirinha: ${response.statusCode}');
     }
   }
