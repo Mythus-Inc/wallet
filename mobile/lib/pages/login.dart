@@ -52,24 +52,7 @@ class _LoginPageState extends State<LoginPage> {
     } 
   }
 
-  Future<bool> requisicaoDeAcessoCronos(DtoalunoLogin dto) async{
-    Map<String, dynamic> corpoRequisicao =  dto.toJson();
-    String jsonBody = jsonEncode(corpoRequisicao);
-    var url = Uri.parse('http://192.168.0.101:8080/cronos/rest/service/solicitacao-carteirinha');
-    var chamdaBackEnd = await http.post(
-      url, // aqui deve ser passada a url do cronos !!
-      headers: {'Content-Type': 'application/json'},
-      body: jsonBody,
-    );
-
-    if (chamdaBackEnd.statusCode == 200) {
-      print("Requisição efetuada com sucesso");
-      return true;
-    } else {
-      print("Requisição falhou");
-      return false;
-    }
-  }
+  
 
   Future<DtoalunoLogin> solicitarValidacaoCarteirinha() async {
   
@@ -96,8 +79,8 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> enter() async {
     if (_raController.text.isNotEmpty && _userPasswordController.text.isNotEmpty) {
-      DtoalunoLogin alunoDto = DtoalunoLogin(ra: _raController.text);
-      await requisicaoDeAcessoCronos(alunoDto);
+      //DtoalunoLogin alunoDto = DtoalunoLogin(ra: _raController.text);
+      await solicitarValidacaoCarteirinha();
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => CarteirinhaPage()),
       );

@@ -4,6 +4,9 @@ import '../components/header.dart';
 import '../components/footer.dart';
 
 class CarteirinhaPage extends StatelessWidget {
+
+  
+
   @override
   Widget build(BuildContext context) {
     // Example data for the first carousel item
