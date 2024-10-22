@@ -58,7 +58,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<DtoalunoLogin> solicitarValidacaoCarteirinha() async {
   
-    var url = Uri.parse('http://192.168.0.101:8080/cronos/rest/service/solicitacao-carteirinha/validada');
+    var url = Uri.parse('http://192.168.34.215:8080/cronos/rest/service/solicitacao-carteirinha/validada');
     var response = await http.get(
       url,
       headers: {'Content-Type': 'application/json; charset=UTF-8'},

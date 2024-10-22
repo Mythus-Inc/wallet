@@ -222,7 +222,7 @@ class CarouselWidget extends StatelessWidget {
                         BorderRadius.circular(8), // Optional: add border radius
                     image: DecorationImage(
                       image: AssetImage(
-                          './assets/app/ifprLogo.png'), // Replace with your image path
+                        'mobile/assets/app/ifprLogo.png'), // Replace with your image path
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -239,7 +239,7 @@ class CarouselWidget extends StatelessWidget {
                         BorderRadius.circular(8), // Optional: add border radius
                     image: DecorationImage(
                       image: AssetImage(
-                          './assets/app/brasao.png'), // Replace with your image path
+                          '../../assets/app/brasao.png'), // Replace with your image path
                       fit: BoxFit.contain,
                     ),
                   ),

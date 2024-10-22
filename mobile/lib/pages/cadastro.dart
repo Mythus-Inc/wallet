@@ -127,19 +127,25 @@ void _onButtonPressed() {
 Future<void> requisicaoDeAcessoCronos(DtoalunoLogin dto) async{
     Map<String, dynamic> corpoRequisicao =  dto.toJson();
     String jsonBody = jsonEncode(corpoRequisicao);
-    var url = Uri.parse('http://192.168.0.101:8080/cronos/rest/service/solicitacao-carteirinha');
-    var chamdaBackEnd = await http.post(
-      url, // aqui deve ser passada a url do cronos !!
-      headers: {'Content-Type': 'application/json'},
-      body: jsonBody,
-    );
-
-    if (chamdaBackEnd.statusCode == 200) {
-      _showSuccessDialog();
-      print("Requisição efetuada com sucesso");
-    } else {
-      print("Requisição falhou");
+    try{
+      var url = Uri.parse('http://192.168.34.215:8080/cronos/rest/service/solicitacao-carteirinha');
+      var chamdaBackEnd = await http.post(
+        url, // aqui deve ser passada a url do cronos !!
+        headers: {'Content-Type': 'application/json'},
+        body: jsonBody,
+      );
+       if (chamdaBackEnd.statusCode == 200) {
+          _showSuccessDialog();
+          print("Requisição efetuada com sucesso");
+        } else {
+          print("Requisição falhou");
+        }
+    }catch(Exception){
+      throw Exception;
     }
+    
+
+   
   }
 
 /*
