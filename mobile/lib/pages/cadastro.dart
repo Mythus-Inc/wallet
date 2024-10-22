@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:wallet_mobile/components/footer.dart';
+import 'package:wallet_mobile/dto/dto_aluno_login.dart';
 import 'package:wallet_mobile/pages/login.dart';
 
 class CadastroPage extends StatefulWidget {
@@ -115,14 +116,45 @@ class _CadastroPageState extends State<CadastroPage> {
   );
 }
 
+void _onButtonPressed() {
+  requisicaoDeAcessoCronos(DtoalunoLogin(ra: _raController.text)).then((_) {
+    print("Requisição concluída.");
+  }).catchError((error) {
+    print("Erro: $error");
+  });
+}
 
+Future<void> requisicaoDeAcessoCronos(DtoalunoLogin dto) async{
+    Map<String, dynamic> corpoRequisicao =  dto.toJson();
+    String jsonBody = jsonEncode(corpoRequisicao);
+    try{
+      var url = Uri.parse('http://192.168.34.215:8080/cronos/rest/service/solicitacao-carteirinha');
+      var chamdaBackEnd = await http.post(
+        url, // aqui deve ser passada a url do cronos !!
+        headers: {'Content-Type': 'application/json'},
+        body: jsonBody,
+      );
+       if (chamdaBackEnd.statusCode == 200) {
+          _showSuccessDialog();
+          print("Requisição efetuada com sucesso");
+        } else {
+          print("Requisição falhou");
+        }
+    }catch(Exception){
+      throw Exception;
+    }
+    
 
+   
+  }
+
+/*
   // Função para enviar os dados para o servidor
   void _requestRegistration() async {
   if (_isFormValid()) {
     try {
       // Prepara os dados para envio
-      var uri = Uri.parse('https://example.com/cadastro'); // Substituir pelo endpoint real
+      var uri = Uri.parse('http://192.168.0.101:8080/cronos/rest/service/solicitacao-carteirinha'); // Substituir pelo endpoint real
       var request = http.MultipartRequest('POST', uri);
 
       // Adiciona RA e Senha
@@ -138,26 +170,26 @@ class _CadastroPageState extends State<CadastroPage> {
       
 
       // Envia a requisição
-      // var response = await request.send();
+      var response = await request.send();
 
       // Verifica a resposta
-      // if (response.statusCode == 200) {
-      //   var responseData = await http.Response.fromStream(response);
-      //   var jsonResponse = jsonDecode(responseData.body);
-      //   print("Cadastro realizado com sucesso: $jsonResponse");
+      if (response.statusCode == 200) {
+        var responseData = await http.Response.fromStream(response);
+         var jsonResponse = jsonDecode(responseData.body);
+         print("Cadastro realizado com sucesso: $jsonResponse");
 
-      //   // Exibe a caixa de diálogo de sucesso
-      //   _showSuccessDialog();
-      // } else {
-      //   print("Erro ao solicitar cadastro: ${response.statusCode}");
-      // }
+          //Exibe a caixa de diálogo de sucesso
+         _showSuccessDialog();
+       } else {
+         print("Erro ao solicitar cadastro: ${response.statusCode}");
+       }
 
 
     } catch (error) {
       print("Erro na requisição: $error");
     }
   }
-}
+}*/
 
 void _showSuccessDialog() {
   showDialog(
@@ -406,7 +438,7 @@ void _showSuccessDialog() {
                             fontSize: 20,
                           ),
                         ),
-                        onPressed: _requestRegistration,  
+                        onPressed: _onButtonPressed,  
                       ),
                     ),
                   ),
