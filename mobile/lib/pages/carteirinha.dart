@@ -1,64 +1,88 @@
 import 'package:flutter/material.dart';
+import 'package:wallet_mobile/dto/dto_aluno_login.dart';
 import 'package:wallet_mobile/pages/login.dart';
+import 'package:wallet_mobile/service/aluno_service.dart';
 import '../components/header.dart';
 import '../components/footer.dart';
 
 class CarteirinhaPage extends StatelessWidget {
+  Future<DtoalunoLogin?> dadosAluno = AlunoService.recuperarAlunoSalvo();
+  
   @override
   Widget build(BuildContext context) {
-    // Example data for the first carousel item
-    final Map<String, String> idInformation = {
-      'nome': 'Renato Augusto Platz Guimarães Neto',
-      'curso': 'Engenharia de Software',
-      'ra': '20220000000',
-      'ingresso': '2022',
-      'validade': '12/2025',
-    };
-
     return Scaffold(
       appBar: Header(
         title: 'Wallet - IFPR',
         onBackPressed: () {
           Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => LoginPage()),
-      );
+            MaterialPageRoute(builder: (context) => LoginPage()),
+          );
         },
       ),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final double screenHeight = constraints.maxHeight;
-          final double appBarHeight = AppBar().preferredSize.height;
-          final double footerHeight = 40.0;
-          final double additionalSpacing = 16.0;
-          final double carouselHeight = screenHeight -
-              appBarHeight -
-              footerHeight -
-              additionalSpacing +
-              30.0;
+      body: FutureBuilder<DtoalunoLogin?>(
+        future: dadosAluno, // O Future que será resolvido
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            // Enquanto os dados estão carregando, exibe um indicador de progresso
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            // Se ocorreu algum erro, exibe uma mensagem de erro
+            return Center(child: Text('Erro ao carregar os dados.'));
+          } else if (snapshot.hasData && snapshot.data != null) {
+            // Quando os dados forem carregados, atualize o idInformation
+            final DtoalunoLogin aluno = snapshot.data!;
+            final String curso = (aluno.alunoTurma != null && aluno.alunoTurma!.isNotEmpty) ? aluno.alunoTurma!.first.curso ?? 'Curso não disponível' : 'Curso não disponível';
+            final String ingresso = (aluno.alunoTurma != null && aluno.alunoTurma!.isNotEmpty) ? aluno.alunoTurma!.first.dataMatricula ?? 'data da matricula não disponível' : 'data da matricula não disponível';
+            final String validade = (aluno.alunoTurma != null && aluno.alunoTurma!.isNotEmpty) ? aluno.alunoTurma!.first.validade ?? 'data da validade não disponível' : 'data da validade não disponível';
+            
+            final Map<String, String> idInformation = {
+              'nome': aluno.nome ?? 'Nome não disponível',
+              'curso': curso,
+              'ra': aluno.ra,
+              'ingresso': ingresso,
+              'validade': validade,
+            };
 
-          return Column(
-            children: [
-              Container(
-                height: carouselHeight,
-                child: CarouselWidget(
-                    idInformation:
-                        idInformation), // Pass ID info to the carousel
-              ),
-              SizedBox(height: 15),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      // Add functionality to export to PDF
-                    },
-                    child: Text('Exportar para PDF'),
-                  ),
-                ],
-              ),
-              Spacer(), // Pushes the footer to the bottom
-            ],
-          );
+            // Aqui construa o layout da página com os dados do aluno
+            return LayoutBuilder(
+              builder: (context, constraints) {
+                final double screenHeight = constraints.maxHeight;
+                final double appBarHeight = AppBar().preferredSize.height;
+                final double footerHeight = 40.0;
+                final double additionalSpacing = 16.0;
+                final double carouselHeight = screenHeight -
+                    appBarHeight -
+                    footerHeight -
+                    additionalSpacing +
+                    30.0;
+
+                return Column(
+                  children: [
+                    Container(
+                      height: carouselHeight,
+                      child: CarouselWidget(idInformation: idInformation),
+                    ),
+                    SizedBox(height: 15),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            // Adicione funcionalidade para exportar para PDF
+                          },
+                          child: Text('Exportar para PDF'),
+                        ),
+                      ],
+                    ),
+                    Spacer(),
+                  ],
+                );
+              },
+            );
+          } else {
+            // Caso os dados sejam nulos ou não sejam carregados corretamente
+            return Center(child: Text('Nenhum dado disponível.'));
+          }
         },
       ),
       bottomNavigationBar: Footer(),
@@ -198,7 +222,7 @@ class CarouselWidget extends StatelessWidget {
                         BorderRadius.circular(8), // Optional: add border radius
                     image: DecorationImage(
                       image: AssetImage(
-                          '../assets/app/ifprLogo.png'), // Replace with your image path
+                        'mobile/assets/app/ifprLogo.png'), // Replace with your image path
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -215,7 +239,7 @@ class CarouselWidget extends StatelessWidget {
                         BorderRadius.circular(8), // Optional: add border radius
                     image: DecorationImage(
                       image: AssetImage(
-                          '../assets/app/brasao.png'), // Replace with your image path
+                          '../../assets/app/brasao.png'), // Replace with your image path
                       fit: BoxFit.contain,
                     ),
                   ),
