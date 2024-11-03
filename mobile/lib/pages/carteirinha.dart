@@ -6,7 +6,7 @@ import '../components/header.dart';
 import '../components/footer.dart';
 
 class CarteirinhaPage extends StatelessWidget {
-  Future<DtoalunoLogin?> dadosAluno = AlunoService.recuperarAlunoSalvo();
+  final Future<DtoalunoLogin?> dadosAluno = AlunoService.recuperarAlunoSalvo();
   
   @override
   Widget build(BuildContext context) {
@@ -25,20 +25,17 @@ class CarteirinhaPage extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.waiting) {
             // Enquanto os dados estão carregando, exibe um indicador de progresso
             return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            // Se ocorreu algum erro, exibe uma mensagem de erro
-            return Center(child: Text('Erro ao carregar os dados.'));
-          } else if (snapshot.hasData && snapshot.data != null) {
-            // Quando os dados forem carregados, atualize o idInformation
-            final DtoalunoLogin aluno = snapshot.data!;
-            final String curso = (aluno.alunoTurma != null && aluno.alunoTurma!.isNotEmpty) ? aluno.alunoTurma!.first.curso ?? 'Curso não disponível' : 'Curso não disponível';
-            final String ingresso = (aluno.alunoTurma != null && aluno.alunoTurma!.isNotEmpty) ? aluno.alunoTurma!.first.dataMatricula ?? 'data da matricula não disponível' : 'data da matricula não disponível';
-            final String validade = (aluno.alunoTurma != null && aluno.alunoTurma!.isNotEmpty) ? aluno.alunoTurma!.first.validade ?? 'data da validade não disponível' : 'data da validade não disponível';
+          } else {
+            // Quando os dados forem carregados ou ocorrer um erro, construa o layout da carteirinha
+            final DtoalunoLogin? aluno = snapshot.data;
+            final String curso = (aluno?.alunoTurma != null && aluno!.alunoTurma!.isNotEmpty) ? aluno.alunoTurma!.first.curso ?? 'Curso não disponível' : 'Curso não disponível';
+            final String ingresso = (aluno?.alunoTurma != null && aluno!.alunoTurma!.isNotEmpty) ? aluno.alunoTurma!.first.dataMatricula ?? 'data da matricula não disponível' : 'data da matricula não disponível';
+            final String validade = (aluno?.alunoTurma != null && aluno!.alunoTurma!.isNotEmpty) ? aluno.alunoTurma!.first.validade ?? 'data da validade não disponível' : 'data da validade não disponível';
             
             final Map<String, String> idInformation = {
-              'nome': aluno.nome ?? 'Nome não disponível',
+              'nome': aluno?.nome ?? 'Nome não disponível',
               'curso': curso,
-              'ra': aluno.ra,
+              'ra': aluno?.ra ?? 'RA não disponível',
               'ingresso': ingresso,
               'validade': validade,
             };
@@ -79,9 +76,6 @@ class CarteirinhaPage extends StatelessWidget {
                 );
               },
             );
-          } else {
-            // Caso os dados sejam nulos ou não sejam carregados corretamente
-            return Center(child: Text('Nenhum dado disponível.'));
           }
         },
       ),
