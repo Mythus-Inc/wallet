@@ -188,7 +188,7 @@ class CarouselWidget extends StatelessWidget {
               Positioned(
                 top:
                     85, // Adjust this to control the distance from the first element
-                left: 379,
+                left: 460,
                 right: 15,
                 child: Container(
                   height: 5.0, // Height of the border
@@ -198,8 +198,30 @@ class CarouselWidget extends StatelessWidget {
               Positioned(
                 top:
                     95, // Adjust this to control the distance from the first element
-                left: 368,
+                left: 450,
                 right: 15,
+                child: Container(
+                  height: 5.0, // Height of the border
+                  color: Colors.green, // Border color
+                ),
+              ),
+              Positioned(
+                top:
+                    0, // Adjust this to control the distance from the first element
+                bottom: 290,
+                left: 460,
+                right: 168,
+                child: Container(
+                  height: 5.0, // Height of the border
+                  color: Colors.red, // Border color
+                ),
+              ),
+              Positioned(
+                top:
+                    0, // Adjust this to control the distance from the first element
+                bottom: 284,
+                left: 450,
+                right: 178,
                 child: Container(
                   height: 5.0, // Height of the border
                   color: Colors.green, // Border color
@@ -241,7 +263,7 @@ class CarouselWidget extends StatelessWidget {
               ),
               Positioned(
                 top: 20, // Adjust this to move the text vertically
-                left: 385, // Adjust this to move the text horizontally
+                left: 475, // Adjust this to move the text horizontally
                 child: Text(
                   'IDENTIDADE\nESTUDANTIL', // Your new text
                   style: TextStyle(
@@ -252,8 +274,8 @@ class CarouselWidget extends StatelessWidget {
                 ),
               ),
               Positioned(
-                top: 170, // Adjust this to move the placeholder vertically
-                left: 320, // Adjust this to move the placeholder horizontally
+                top: 120, // Adjust this to move the placeholder vertically
+                left: 455, // Adjust this to move the placeholder horizontally
                 child: Container(
                   width: 150, // Width of the placeholder
                   height: 200, // Height of the placeholder
