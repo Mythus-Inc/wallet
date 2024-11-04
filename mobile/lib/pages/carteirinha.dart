@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,10 +11,161 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 
-Future<void> generatePDF(String nome, String curso, String anoEgresse, String validade) async {
+Future<void> generatePDF(String nome, String curso, String anoEgresse, String validade, Uint8List? imagemAluno) async {
   final pdf = pw.Document();
+  final String dataGeracao = DateTime.now().toLocal().toString().split(' ')[0];
 
-  pdf.addPage()
+  // Load institutional logo
+  final ByteData ifprLogoData = await rootBundle.load('assets/app/ifprLogo.png');
+  final Uint8List ifprLogoBytes = ifprLogoData.buffer.asUint8List();
+  final pw.ImageProvider ifprLogo = pw.MemoryImage(ifprLogoBytes);
+
+  pdf.addPage(
+    pw.Page(
+      pageFormat: PdfPageFormat.a4,
+      build: (pw.Context context) {
+        return pw.Container(
+          decoration: pw.BoxDecoration(
+            border: pw.Border.all(color: PdfColors.green, width: 3),
+            borderRadius: pw.BorderRadius.circular(12),
+          ),
+          child: pw.Padding(
+            padding: pw.EdgeInsets.all(20),
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                // Header with logos and title
+                pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pw.Image(ifprLogo, width: 100, height: 100),
+                    pw.Text(
+                      'IDENTIDADE ESTUDANTIL',
+                      style: pw.TextStyle(
+                        fontSize: 18, 
+                        fontWeight: pw.FontWeight.bold,
+                        color: PdfColors.green,
+                      ),
+                    ),
+                  ],
+                ),
+                pw.Divider(color: PdfColors.red, thickness: 2),
+                
+                // Student Photo and Details
+                pw.Row(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    // Photo Section
+                    imagemAluno != null
+                      ? pw.Container(
+                          width: 150,
+                          height: 200,
+                          decoration: pw.BoxDecoration(
+                            border: pw.Border.all(color: PdfColors.green, width: 2),
+                          ),
+                          child: pw.Image(
+                            pw.MemoryImage(imagemAluno),
+                            width: 150,
+                            height: 200,
+                            fit: pw.BoxFit.cover,
+                          ),
+                        )
+                      : pw.Container(
+                          width: 150,
+                          height: 200,
+                          decoration: pw.BoxDecoration(
+                            border: pw.Border.all(color: PdfColors.grey, width: 2),
+                          ),
+                          child: pw.Center(
+                            child: pw.Text(
+                              'Foto não disponível', 
+                              style: pw.TextStyle(color: PdfColors.grey),
+                            ),
+                          ),
+                        ),
+                    
+                    // Details Section
+                    pw.SizedBox(width: 20),
+                    pw.Expanded(
+                      child: pw.Column(
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
+                          _buildDetailRow('Nome', nome),
+                          _buildDetailRow('Curso', curso),
+                          _buildDetailRow('Ano de Ingresso', anoEgresse),
+                          _buildDetailRow('Validade', validade),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                
+                pw.Spacer(),
+                
+                // Footer
+                pw.Divider(color: PdfColors.red, thickness: 2),
+                pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pw.Text(
+                      'Instituto Federal do Paraná',
+                      style: pw.TextStyle(
+                        fontSize: 10, 
+                        color: PdfColors.grey,
+                      ),
+                    ),
+                    pw.Text(
+                      'Gerado em: $dataGeracao',
+                      style: pw.TextStyle(
+                        fontSize: 10, 
+                        color: PdfColors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    ),
+  );
+
+  await Printing.layoutPdf(
+    onLayout: (PdfPageFormat format) async => pdf.save(),
+  );
+}
+
+// Helper method to create consistent detail rows
+pw.Widget _buildDetailRow(String label, String value) {
+  return pw.Padding(
+    padding: pw.EdgeInsets.symmetric(vertical: 5),
+    child: pw.RichText(
+      text: pw.TextSpan(
+        children: [
+          pw.TextSpan(
+            text: '$label: ',
+            style: pw.TextStyle(
+              fontWeight: pw.FontWeight.bold,
+              fontSize: 12,
+              color: PdfColors.green,
+            ),
+          ),
+          pw.TextSpan(
+            text: value,
+            style: pw.TextStyle(
+              fontSize: 12,
+              color: PdfColors.black,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+Future<Uint8List> _loadAlunoImage() async {
+  final ByteData data = await rootBundle.load('assets/app/user.png');
+  return data.buffer.asUint8List();
 }
 
 class CarteirinhaPage extends StatelessWidget {
@@ -102,11 +252,6 @@ class CarteirinhaPage extends StatelessWidget {
   child: Text('Exportar para PDF'),
 ),
 
-                          onPressed: () {
-                            generatePDF("Renato Augusto Platz Guimarães Neto", "Bacharelado em Engenharia de Software", "2022", "12/2025");
-                          },
-                          child: Text('Exportar para PDF'),
-                        ),
                       ],
                     ),
                     Spacer(),
