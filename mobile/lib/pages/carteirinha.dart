@@ -228,25 +228,8 @@ class CarouselWidget extends StatelessWidget {
                 ),
               ),
               Positioned(
-                top: -15, // Adjust this to move the image vertically
-                left: 220, // Adjust this to move the image horizontally
-                child: Container(
-                  width: 130, // Width of the image
-                  height: 130, // Height of the image
-                  decoration: BoxDecoration(
-                    borderRadius:
-                        BorderRadius.circular(8), // Optional: add border radius
-                    image: DecorationImage(
-                      image: AssetImage(
-                        'mobile/assets/app/ifprLogo.png'), // Replace with your image path
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
                 top: -25, // Adjust this to move the image vertically
-                left: 30, // Adjust this to move the image horizontally
+                left: 270, // Adjust this to move the image horizontally
                 child: Container(
                   width: 160, // Width of the image
                   height: 160, // Height of the image
@@ -255,7 +238,24 @@ class CarouselWidget extends StatelessWidget {
                         BorderRadius.circular(8), // Optional: add border radius
                     image: DecorationImage(
                       image: AssetImage(
-                          '../../assets/app/brasao.png'), // Replace with your image path
+                        'assets/app/ifprLogo.png'), // Replace with your image path
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                top: -48, // Adjust this to move the image vertically
+                left: 30, // Adjust this to move the image horizontally
+                child: Container(
+                  width: 200, // Width of the image
+                  height: 200, // Height of the image
+                  decoration: BoxDecoration(
+                    borderRadius:
+                        BorderRadius.circular(8), // Optional: add border radius
+                    image: DecorationImage(
+                      image: AssetImage(
+                          'assets/app/brasao.png'), // Replace with your image path
                       fit: BoxFit.contain,
                     ),
                   ),
