@@ -59,7 +59,7 @@ class CarteirinhaPage extends StatelessWidget {
                       height: carouselHeight,
                       child: CarouselWidget(idInformation: idInformation),
                     ),
-                    SizedBox(height: 15),
+                    SizedBox(height: 25),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -84,28 +84,62 @@ class CarteirinhaPage extends StatelessWidget {
   }
 }
 
-class CarouselWidget extends StatelessWidget {
+class CarouselWidget extends StatefulWidget {
   final Map<String, String> idInformation;
 
   CarouselWidget({required this.idInformation});
 
   @override
+  _CarouselWidgetState createState() => _CarouselWidgetState();
+}
+
+class _CarouselWidgetState extends State<CarouselWidget> {
+  int _currentPage = 0;
+
+  @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
 
-    return Container(
-      width: screenWidth,
-      color: Colors.white,
-      child: PageView(
-        scrollDirection: Axis.horizontal,
-        children: <Widget>[
-          _buildInfoItem(idInformation), // First item shows ID information
-          _buildQRCodeItem(), // Second item shows a QR code
-        ],
-      ),
+    return Column(
+      children: [
+        Expanded( // Usar Expanded para dar uma altura fixa ao PageView
+          child: Container(
+            width: screenWidth,
+            color: Colors.white,
+            child: PageView(
+              scrollDirection: Axis.horizontal,
+              onPageChanged: (index) {
+                setState(() {
+                  _currentPage = index;
+                });
+              },
+              children: <Widget>[
+                _buildInfoItem(widget.idInformation), // Primeira página
+                _buildQRCodeItem(), // Segunda página
+              ],
+            ),
+          ),
+        ),
+        SizedBox(height: 16),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.circle,
+              size: 10,
+              color: _currentPage == 0 ? Colors.green : Colors.grey,
+            ),
+            SizedBox(width: 8),
+            Icon(
+              Icons.circle,
+              size: 10,
+              color: _currentPage == 1 ? Colors.green : Colors.grey,
+            ),
+          ],
+        ),
+      ],
     );
   }
-
   Widget _buildInfoItem(Map<String, String> info) {
     return Container(
       color: Colors.white,
@@ -188,7 +222,7 @@ class CarouselWidget extends StatelessWidget {
               Positioned(
                 top:
                     85, // Adjust this to control the distance from the first element
-                left: 460,
+                left: 445,
                 right: 15,
                 child: Container(
                   height: 5.0, // Height of the border
@@ -198,7 +232,7 @@ class CarouselWidget extends StatelessWidget {
               Positioned(
                 top:
                     95, // Adjust this to control the distance from the first element
-                left: 450,
+                left: 435,
                 right: 15,
                 child: Container(
                   height: 5.0, // Height of the border
@@ -209,8 +243,8 @@ class CarouselWidget extends StatelessWidget {
                 top:
                     0, // Adjust this to control the distance from the first element
                 bottom: 290,
-                left: 460,
-                right: 168,
+                left: 444,
+                right: 158,
                 child: Container(
                   height: 5.0, // Height of the border
                   color: Colors.red, // Border color
@@ -220,8 +254,8 @@ class CarouselWidget extends StatelessWidget {
                 top:
                     0, // Adjust this to control the distance from the first element
                 bottom: 284,
-                left: 450,
-                right: 178,
+                left: 435,
+                right: 167,
                 child: Container(
                   height: 5.0, // Height of the border
                   color: Colors.green, // Border color
@@ -229,7 +263,7 @@ class CarouselWidget extends StatelessWidget {
               ),
               Positioned(
                 top: -25, // Adjust this to move the image vertically
-                left: 270, // Adjust this to move the image horizontally
+                left: 250, // Adjust this to move the image horizontally
                 child: Container(
                   width: 160, // Width of the image
                   height: 160, // Height of the image
@@ -246,7 +280,7 @@ class CarouselWidget extends StatelessWidget {
               ),
               Positioned(
                 top: -48, // Adjust this to move the image vertically
-                left: 30, // Adjust this to move the image horizontally
+                left: 25, // Adjust this to move the image horizontally
                 child: Container(
                   width: 200, // Width of the image
                   height: 200, // Height of the image
@@ -263,7 +297,7 @@ class CarouselWidget extends StatelessWidget {
               ),
               Positioned(
                 top: 20, // Adjust this to move the text vertically
-                left: 475, // Adjust this to move the text horizontally
+                left: 460, // Adjust this to move the text horizontally
                 child: Text(
                   'IDENTIDADE\nESTUDANTIL', // Your new text
                   style: TextStyle(
@@ -275,7 +309,7 @@ class CarouselWidget extends StatelessWidget {
               ),
               Positioned(
                 top: 120, // Adjust this to move the placeholder vertically
-                left: 455, // Adjust this to move the placeholder horizontally
+                left: 430, // Adjust this to move the placeholder horizontally
                 child: Container(
                   width: 150, // Width of the placeholder
                   height: 200, // Height of the placeholder
