@@ -7,7 +7,7 @@ import '../components/footer.dart';
 
 class CarteirinhaPage extends StatelessWidget {
   final Future<DtoalunoLogin?> dadosAluno = AlunoService.recuperarAlunoSalvo();
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,10 +28,21 @@ class CarteirinhaPage extends StatelessWidget {
           } else {
             // Quando os dados forem carregados ou ocorrer um erro, construa o layout da carteirinha
             final DtoalunoLogin? aluno = snapshot.data;
-            final String curso = (aluno?.alunoTurma != null && aluno!.alunoTurma!.isNotEmpty) ? aluno.alunoTurma!.first.curso ?? 'Curso não disponível' : 'Curso não disponível';
-            final String ingresso = (aluno?.alunoTurma != null && aluno!.alunoTurma!.isNotEmpty) ? aluno.alunoTurma!.first.dataMatricula ?? 'data da matricula não disponível' : 'data da matricula não disponível';
-            final String validade = (aluno?.alunoTurma != null && aluno!.alunoTurma!.isNotEmpty) ? aluno.alunoTurma!.first.validade ?? 'data da validade não disponível' : 'data da validade não disponível';
-            
+            final String curso =
+                (aluno?.alunoTurma != null && aluno!.alunoTurma!.isNotEmpty)
+                    ? aluno.alunoTurma!.first.curso ?? 'Curso não disponível'
+                    : 'Curso não disponível';
+            final String ingresso =
+                (aluno?.alunoTurma != null && aluno!.alunoTurma!.isNotEmpty)
+                    ? aluno.alunoTurma!.first.dataMatricula ??
+                        'data da matricula não disponível'
+                    : 'data da matricula não disponível';
+            final String validade =
+                (aluno?.alunoTurma != null && aluno!.alunoTurma!.isNotEmpty)
+                    ? aluno.alunoTurma!.first.validade ??
+                        'data da validade não disponível'
+                    : 'data da validade não disponível';
+
             final Map<String, String> idInformation = {
               'nome': aluno?.nome ?? 'Nome não disponível',
               'curso': curso,
@@ -102,7 +113,8 @@ class _CarouselWidgetState extends State<CarouselWidget> {
 
     return Column(
       children: [
-        Expanded( // Usar Expanded para dar uma altura fixa ao PageView
+        Expanded(
+          // Usar Expanded para dar uma altura fixa ao PageView
           child: Container(
             width: screenWidth,
             color: Colors.white,
@@ -140,6 +152,7 @@ class _CarouselWidgetState extends State<CarouselWidget> {
       ],
     );
   }
+
   Widget _buildInfoItem(Map<String, String> info) {
     return Container(
       color: Colors.white,
@@ -272,7 +285,7 @@ class _CarouselWidgetState extends State<CarouselWidget> {
                         BorderRadius.circular(8), // Optional: add border radius
                     image: DecorationImage(
                       image: AssetImage(
-                        'assets/app/ifprLogo.png'), // Replace with your image path
+                          'assets/app/ifprLogo.png'), // Replace with your image path
                       fit: BoxFit.contain,
                     ),
                   ),
