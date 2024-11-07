@@ -12,98 +12,10 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 
-Future<void> generatePDF(String nome, String curso, String anoEgresse, String validade, Uint8List? imagemAluno,) async {
+Future<void> generatePDF(String nome, String curso, String anoEgresse, String validade) async {
   final pdf = pw.Document();
-  final String dataGeracao = DateTime.now().toLocal().toString().split(' ')[0]; // Formata para 'YYYY-MM-DD'
 
-
-  pdf.addPage(
-    pw.Page(
-      pageFormat: PdfPageFormat.a4,
-      build: (pw.Context context) {
-        return pw.Column(
-          crossAxisAlignment: pw.CrossAxisAlignment.stretch,
-          children: [
-            pw.Container(
-              color: PdfColors.green,
-              height: 50,
-              alignment: pw.Alignment.center,
-              child: pw.Text("Carteirinha do Aluno", style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold, color: PdfColors.white)),
-            ),
-            pw.SizedBox(height: 10),
-            pw.Divider(color: PdfColors.green, thickness: 2),
-            pw.Divider(color: PdfColors.red, thickness: 2),
-            pw.SizedBox(height: 20),
-
-            if (imagemAluno != null) 
-            pw.Center(
-              child: pw.Image(
-                pw.MemoryImage(imagemAluno),
-                width: 100,
-                height: 100,
-              ),
-            ),
-            pw.SizedBox(height: 20),
-            
-          crossAxisAlignment: pw.CrossAxisAlignment.start,
-          children: [
-            pw.Text("Carteirinha do Aluno", style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold)),
-            pw.SizedBox(height: 20),
-            pw.Text("Nome: $nome", style: pw.TextStyle(fontSize: 18)),
-            pw.Text("Curso: $curso", style: pw.TextStyle(fontSize: 18)),
-            pw.Text("Ano de Egresso: $anoEgresse", style: pw.TextStyle(fontSize: 18)),
-            pw.Text("Validade: $validade", style: pw.TextStyle(fontSize: 18)),
-            pw.SizedBox(height: 20),
-
-            pw.Divider(color: PdfColors.green, thickness: 2),
-            pw.Divider(color: PdfColors.red, thickness: 2),
-            pw.Align(alignment: pw.Alignment.bottomRight,
-            child: pw.Text(
-              "Gerado em: $dataGeracao",
-              style: pw.TextStyle(fontSize: 12, color: PdfColors.grey),
-            ),
-            pw.SizedBox(height: 20),
-            
-            pw.Table.fromTextArray(
-              border: pw.TableBorder.all(color: PdfColors.grey),
-              cellAlignment: pw.Alignment.centerLeft,
-              headerDecoration: pw.BoxDecoration(color: PdfColors.grey300),
-              headerHeight: 25,
-              cellHeight: 40,
-              headerStyle: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
-              cellStyle: pw.TextStyle(fontSize: 16),
-              data: [
-                ['Nome:', nome],
-                ['Curso:', curso],
-                ['Ano de Egresso:', anoEgresse],
-                ['Validade:', validade],
-              ],
-            ),
-            pw.SizedBox(height: 20),
-
-            pw.Divider(color: PdfColors.green, thickness: 2),
-            pw.Align(
-              alignment: pw.Alignment.bottomRight,
-              child: pw.Text(
-                "Instituto Federal do Paraná - IFPR",
-                style: pw.TextStyle(fontSize: 12, color: PdfColors.grey),
-              ),
-            ),
-          ],
-          ]
-        );
-      },
-    ),
-  );
-
-  await Printing.layoutPdf(
-    onLayout: (PdfPageFormat format) async => pdf.save(),
-  );
-}
-
-Future<Uint8List> _loadAlunoImage() async {
-  final ByteData data = await rootBundle.load('assets/app/user.png');
-  return data.buffer.asUint8List();
+  pdf.addPage()
 }
 
 class CarteirinhaPage extends StatelessWidget {
