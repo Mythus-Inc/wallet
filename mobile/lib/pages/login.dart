@@ -58,7 +58,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<DtoalunoLogin> solicitarValidacaoCarteirinha() async {
   
-    var url = Uri.parse('http://192.168.34.215:8080/cronos/rest/service/solicitacao-carteirinha/validada');
+    var url = Uri.parse('http://192.168.80.215:8080/cronos/rest/service/solicitacao-carteirinha/validada');
     var response = await http.get(
       url,
       headers: {'Content-Type': 'application/json; charset=UTF-8'},
@@ -75,7 +75,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<bool> loginCronos() async {
   
-    var url = Uri.parse('http://192.168.34.215:8080/cronos/rest/service/login');
+    var url = Uri.parse('http://192.168.80.215:8080/cronos/rest/service/login');
     var response = await http.post(
       url,
       headers: {'Content-Type': 'application/json; charset=UTF-8'},
@@ -98,9 +98,10 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> enter() async {
-    if (_raController.text.isNotEmpty && _userPasswordController.text.isNotEmpty) {
-        Future<bool> eLoginValido = loginCronos();
-        if(eLoginValido == true){
+    if (_isFormValid()) {
+        bool eLoginValido = await loginCronos();
+        print("resultado login: $eLoginValido");
+        if(eLoginValido){
             Future<DtoalunoLogin?> dadosAlunoFuture = AlunoService.recuperarAlunoSalvo();
             DtoalunoLogin? dadosAluno = await dadosAlunoFuture; 
 
@@ -127,7 +128,7 @@ class _LoginPageState extends State<LoginPage> {
                       actions: [
                         TextButton(
                           onPressed: () {
-                            Navigator.of(context).pop(); // Fecha o pop-up
+                            Navigator.of(context).pop();
                           },
                           child: Text('OK'),
                         ),
@@ -138,7 +139,23 @@ class _LoginPageState extends State<LoginPage> {
             }
           }
         }else{
-          print("Login inválido");
+          showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Login inválido'),
+                      content: Text('Sua senha ou ra está incorreto, lembre-se que são os mesmos dados utilizados para acessar o cronos!'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(); 
+                          },
+                          child: Text('OK'),
+                        ),
+                      ],
+                    );
+                  },
+                );
         }     
       }
   }
