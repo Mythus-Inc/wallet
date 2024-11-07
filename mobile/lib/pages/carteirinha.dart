@@ -4,6 +4,16 @@ import 'package:wallet_mobile/pages/login.dart';
 import 'package:wallet_mobile/service/aluno_service.dart';
 import '../components/header.dart';
 import '../components/footer.dart';
+import 'package:printing/printing.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+
+
+Future<void> generatePDF(String nome, String curso, String anoEgresse, String validade) async {
+  final pdf = pw.Document();
+
+  pdf.addPage()
+}
 
 class CarteirinhaPage extends StatelessWidget {
   final Future<DtoalunoLogin?> dadosAluno = AlunoService.recuperarAlunoSalvo();
