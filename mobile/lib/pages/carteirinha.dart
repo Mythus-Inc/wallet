@@ -12,7 +12,28 @@ import 'package:pdf/widgets.dart' as pw;
 Future<void> generatePDF(String nome, String curso, String anoEgresse, String validade) async {
   final pdf = pw.Document();
 
-  pdf.addPage()
+  pdf.addPage(
+    pw.Page(
+      pageFormat: PdfPageFormat.a4,
+      build: (pw.Context context) {
+        return pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Text("Carteirinha do Aluno", style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold)),
+            pw.SizedBox(height: 20),
+            pw.Text("Nome: $nome", style: pw.TextStyle(fontSize: 18)),
+            pw.Text("Curso: $curso", style: pw.TextStyle(fontSize: 18)),
+            pw.Text("Ano de Egresso: $anoEgresse", style: pw.TextStyle(fontSize: 18)),
+            pw.Text("Validade: $validade", style: pw.TextStyle(fontSize: 18)),
+          ]
+        );
+      },
+    ),
+  );
+
+  await Printing.layoutPdf(
+    onLayout: (PdfPageFormat format) async => pdf.save(),
+  );
 }
 
 class CarteirinhaPage extends StatelessWidget {
@@ -86,7 +107,7 @@ class CarteirinhaPage extends StatelessWidget {
                       children: [
                         ElevatedButton(
                           onPressed: () {
-                            // Adicione funcionalidade para exportar para PDF
+                            generatePDF("Renato Augusto Platz Guimarães Neto", "Bacharelado em Engenharia de Software", "2022", "12/2025");
                           },
                           child: Text('Exportar para PDF'),
                         ),
