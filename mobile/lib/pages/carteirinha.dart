@@ -45,6 +45,10 @@ Future<void> generatePDF(String nome, String curso, String anoEgresse, String va
             ),
             pw.SizedBox(height: 20),
             
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Text("Carteirinha do Aluno", style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold)),
+            pw.SizedBox(height: 20),
             pw.Text("Nome: $nome", style: pw.TextStyle(fontSize: 18)),
             pw.Text("Curso: $curso", style: pw.TextStyle(fontSize: 18)),
             pw.Text("Ano de Egresso: $anoEgresse", style: pw.TextStyle(fontSize: 18)),
@@ -86,6 +90,7 @@ Future<void> generatePDF(String nome, String curso, String anoEgresse, String va
               ),
             ),
           ],
+          ]
         );
       },
     ),
@@ -185,6 +190,11 @@ class CarteirinhaPage extends StatelessWidget {
   child: Text('Exportar para PDF'),
 ),
 
+                          onPressed: () {
+                            generatePDF("Renato Augusto Platz Guimarães Neto", "Bacharelado em Engenharia de Software", "2022", "12/2025");
+                          },
+                          child: Text('Exportar para PDF'),
+                        ),
                       ],
                     ),
                     Spacer(),
