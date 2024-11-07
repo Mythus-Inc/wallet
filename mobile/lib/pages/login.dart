@@ -73,6 +73,24 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  Future<bool> loginCronos() async {
+  
+    var url = Uri.parse('http://192.168.34.215:8080/cronos/rest/service/login');
+    var response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json; charset=UTF-8'},
+      body: jsonEncode({
+        'ra': _raController.text,
+        'senha': _userPasswordController.text,
+      }),
+    );
+
+    if(response.statusCode == 200){
+     return true;
+    }else{
+      return false;
+    }
+  }
 
 
   bool _isFormValid() {
@@ -81,44 +99,48 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> enter() async {
     if (_raController.text.isNotEmpty && _userPasswordController.text.isNotEmpty) {
-        Future<DtoalunoLogin?> dadosAlunoFuture = AlunoService.recuperarAlunoSalvo();
-        DtoalunoLogin? dadosAluno = await dadosAlunoFuture; 
+        Future<bool> eLoginValido = loginCronos();
+        if(eLoginValido == true){
+            Future<DtoalunoLogin?> dadosAlunoFuture = AlunoService.recuperarAlunoSalvo();
+            DtoalunoLogin? dadosAluno = await dadosAlunoFuture; 
 
-        // Se os dados do aluno já estiverem salvos localmente, vai direto para a CarteirinhaPage
-        if (dadosAluno != null /* && dadosAluno.ra == _raController.text*/) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => CarteirinhaPage()),
-          );
-          return; 
-        }else{
-          DtoalunoLogin dadosAlunoRecebidoDoBackend  = await solicitarValidacaoCarteirinha();
-          if(dadosAlunoRecebidoDoBackend != null){
-            AlunoService.salvarAluno(dadosAlunoRecebidoDoBackend);
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => CarteirinhaPage()),
-            );
-
-          }else{
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: Text('Carteirinha não validada'),
-                  content: Text('Sua carteirinha ainda não foi validada. Por favor, aguarde a liberação da secretaria.'),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop(); // Fecha o pop-up
-                      },
-                      child: Text('OK'),
-                    ),
-                  ],
+            if (dadosAluno != null) {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => CarteirinhaPage()),
+              );
+              return; 
+            }else{
+              DtoalunoLogin dadosAlunoRecebidoDoBackend  = await solicitarValidacaoCarteirinha();
+              if(dadosAlunoRecebidoDoBackend != null){
+                AlunoService.salvarAluno(dadosAlunoRecebidoDoBackend);
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => CarteirinhaPage()),
                 );
-              },
-            );
+
+              }else{
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Carteirinha não validada'),
+                      content: Text('Sua carteirinha ainda não foi validada. Por favor, aguarde a liberação da secretaria.'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(); // Fecha o pop-up
+                          },
+                          child: Text('OK'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+            }
           }
-        }
-    } 
+        }else{
+          print("Login inválido");
+        }     
+      }
   }
 
   @override
