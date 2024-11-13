@@ -117,13 +117,13 @@ class _LoginPageState extends State<requestRegistrationPage> {
             Expanded(
               child: ListView(
                 children: <Widget>[
-                  SizedBox(height: 20),
+                  SizedBox(height: 50),
                   SizedBox(
-                    width: 180,
-                    height: 180,
+                    width: 90,
+                    height: 90,
                     child: Image.asset("assets/app/ifprlogo.png"),
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 50),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 40),
                     child: Center(
@@ -142,7 +142,7 @@ class _LoginPageState extends State<requestRegistrationPage> {
                             text: TextSpan(
                               style: TextStyle(fontSize: 16, color: Colors.black),
                               children: [
-                                TextSpan(text: "Preencha os Campos com o "),
+                                TextSpan(text: "Preencha os campos com o "),
                                 TextSpan(
                                   text: "RA",
                                   style: TextStyle(fontWeight: FontWeight.bold),
@@ -165,7 +165,7 @@ class _LoginPageState extends State<requestRegistrationPage> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 50),
                   // Padding RA
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 40),
@@ -265,7 +265,7 @@ class _LoginPageState extends State<requestRegistrationPage> {
                       onChanged: (_) => setState(() {}),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 30),
                   // Padding Acessar
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 40),
@@ -286,23 +286,11 @@ class _LoginPageState extends State<requestRegistrationPage> {
                             fontSize: 20,
                           ),
                         ),
-                        onPressed: (){enter();},
-                        
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 40),
-                    child: Container(
-                      height: 40,
-                      alignment: Alignment.center,
-                      child: TextButton(
-                        child: Text("Cadastrar nova senha"),
                         onPressed: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(builder: (context) => CadastroPage()),
                           );
-                        },
+                        },                       
                       ),
                     ),
                   ),                  
