@@ -247,14 +247,19 @@ void _showSuccessDialog() {
             Expanded(
               child: ListView(
                 children: <Widget>[
-                  SizedBox(height: 20),
+                  SizedBox(
+                    width: 90,
+                    height: 90,
+                    child: Image.asset("assets/app/ifprlogo.png"),
+                  ),
+                  SizedBox(height: 50),
                   GestureDetector(
                     onTap: () => _showAvatarOptions(context),
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
                         CircleAvatar(
-                          radius: 60,
+                          radius: 70,
                           backgroundColor: Colors.grey[300],
                           backgroundImage: _imageFile != null ? FileImage(_imageFile!) : null,
                         ),
@@ -262,162 +267,15 @@ void _showSuccessDialog() {
                           Icon(
                             Icons.camera_alt,
                             color: Colors.grey[700], 
-                            size: 32, 
+                            size: 55, 
                           ),
                       ],
                     ),
                   ),
-                  SizedBox(height: 20),
-                  // Campo R.A.
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 40),
-                    child: Text(
-                      "R.A.",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 20,
-                      ),
-                      textAlign: TextAlign.left,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 40),
-                    child: TextFormField(
-                      controller: _raController,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        floatingLabelBehavior: FloatingLabelBehavior.never,
-                        labelText: "RA",
-                        labelStyle: TextStyle(
-                          color: Color.fromARGB(255, 172, 172, 172),
-                          fontWeight: FontWeight.w400,
-                          fontSize: 20,
-                        ),
-                        filled: true,
-                        fillColor: Color(0xFFCED1CE),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                      style: TextStyle(fontSize: 20),
-                      onChanged: (_) => setState(() {}),
-                    ),
-                  ),
-                  SizedBox(height: 30),
-                  // Campo Senha
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 40),
-                    child: Text(
-                      "Senha",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 20,
-                      ),
-                      textAlign: TextAlign.left,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 40),
-                    child: TextFormField(
-                      controller: _userPasswordController,
-                      focusNode: _passwordFocusNode,
-                      keyboardType: TextInputType.text,
-                      obscureText: !_passwordVisible,
-                      decoration: InputDecoration(
-                        floatingLabelBehavior: FloatingLabelBehavior.never,
-                        labelText: "Senha",
-                        labelStyle: TextStyle(
-                          color: Color.fromARGB(255, 172, 172, 172),
-                          fontWeight: FontWeight.w400,
-                          fontSize: 20,
-                        ),
-                        filled: true,
-                        fillColor: Color(0xFFCED1CE),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          borderSide: BorderSide.none,
-                        ),
-                        suffixIcon: _passwordFocusNode.hasFocus
-                            ? Padding(
-                                padding: const EdgeInsets.only(right: 5.0),
-                                child: IconButton(
-                                  icon: Icon(
-                                    _passwordVisible
-                                        ? Icons.visibility
-                                        : Icons.visibility_off,
-                                    color: Colors.black,
-                                  ),
-                                  onPressed: () {
-                                    setState(() {
-                                      _passwordVisible = !_passwordVisible;
-                                    });
-                                  },
-                                ),
-                              )
-                            : null,
-                      ),
-                      style: TextStyle(fontSize: 20),
-                      onChanged: (_) => setState(() {}),
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  // Campo Confirmar Senha
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 40),
-                    child: Text(
-                      "Confirmar Senha",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 20,
-                      ),
-                      textAlign: TextAlign.left,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 40),
-                    child: TextFormField(
-                      controller: _confirmUserPasswordController,
-                      focusNode: _confirmPasswordFocusNode,
-                      keyboardType: TextInputType.text,
-                      obscureText: !_confirmPasswordVisible,
-                      decoration: InputDecoration(
-                        floatingLabelBehavior: FloatingLabelBehavior.never,
-                        labelText: "Confirmar Senha",
-                        labelStyle: TextStyle(
-                          color: Color.fromARGB(255, 172, 172, 172),
-                          fontWeight: FontWeight.w400,
-                          fontSize: 20,
-                        ),
-                        filled: true,
-                        fillColor: Color(0xFFCED1CE),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          borderSide: BorderSide.none,
-                        ),
-                        suffixIcon: _confirmPasswordFocusNode.hasFocus
-                            ? Padding(
-                                padding: const EdgeInsets.only(right: 5.0),
-                                child: IconButton(
-                                  icon: Icon(
-                                    _confirmPasswordVisible
-                                        ? Icons.visibility
-                                        : Icons.visibility_off,
-                                    color: Colors.black,
-                                  ),
-                                  onPressed: () {
-                                    setState(() {
-                                      _confirmPasswordVisible =
-                                          !_confirmPasswordVisible;
-                                    });
-                                  },
-                                ),
-                              )
-                            : null,
-                      ),
-                      style: TextStyle(fontSize: 20),
-                      onChanged: (_) => setState(() {}),
-                    ),
+                  SizedBox(
+                    width: 90,
+                    height: 90,
+                    child: Image.asset("assets/app/selfie.png"),
                   ),
                   SizedBox(height: 40),
                   // Botão "Solicitar Cadastro"

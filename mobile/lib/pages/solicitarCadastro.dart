@@ -165,7 +165,7 @@ class _LoginPageState extends State<requestRegistrationPage> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 50),
+                  SizedBox(height: 30),
                   // Padding RA
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 40),
