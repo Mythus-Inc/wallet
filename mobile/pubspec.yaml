@@ -88,6 +88,7 @@ flutter:
   assets:
     - assets/app/ifprLogo.png
     - assets/app/brasao.png
+    - assets/app/ifprlogo.png
     
 
   # An image asset can refer to one or more resolution-specific "variants", see
