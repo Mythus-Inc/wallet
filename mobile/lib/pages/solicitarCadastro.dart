@@ -1,33 +1,27 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wallet_mobile/dto/dto_aluno_login.dart';
 import 'package:wallet_mobile/pages/carteirinha.dart';
 import 'package:wallet_mobile/pages/cadastro.dart';
 import 'package:wallet_mobile/service/aluno_service.dart';
-import 'package:wallet_mobile/widgets/service/biometric_service.dart';
 import '/components/footer.dart';
 
-class LoginPage extends StatefulWidget {
+class requestRegistrationPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
 // Adiciona biometria
-class _LoginPageState extends State<LoginPage> {
-  bool _rememberMe = false;
+class _LoginPageState extends State<requestRegistrationPage> {
   bool _passwordVisible = false;
   final TextEditingController _userPasswordController = TextEditingController();
   final TextEditingController _raController = TextEditingController();
   final FocusNode _passwordFocusNode = FocusNode();
-  late BiometricService biometricService;
-  bool isAuthenticated = false;
 
   @override
   void initState() {
     super.initState();
-    biometricService = BiometricService();
     
     _passwordFocusNode.addListener(() {
       setState(() {
@@ -44,21 +38,11 @@ class _LoginPageState extends State<LoginPage> {
     _raController.dispose();
     super.dispose();
   }
-
-  Future<void> authenticateUser() async {
-    isAuthenticated = await biometricService.authenticate();
-    if (isAuthenticated) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => CarteirinhaPage()),
-      );
-    } 
-  }
-
   
 
   Future<DtoalunoLogin> solicitarValidacaoCarteirinha() async {
   
-    var url = Uri.parse('http://192.168.80.215:8080/cronos/rest/service/solicitacao-carteirinha/validada');
+    var url = Uri.parse('http://192.168.34.215:8080/cronos/rest/service/solicitacao-carteirinha/validada');
     var response = await http.get(
       url,
       headers: {'Content-Type': 'application/json; charset=UTF-8'},
@@ -73,24 +57,6 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  Future<bool> loginCronos() async {
-  
-    var url = Uri.parse('http://192.168.80.215:8080/cronos/rest/service/login');
-    var response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json; charset=UTF-8'},
-      body: jsonEncode({
-        'ra': _raController.text,
-        'senha': _userPasswordController.text,
-      }),
-    );
-
-    if(response.statusCode == 200){
-     return true;
-    }else{
-      return false;
-    }
-  }
 
 
   bool _isFormValid() {
@@ -98,46 +64,45 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> enter() async {
-    if (_isFormValid()) {
-        bool eLoginValido = await loginCronos();
-        print("resultado login: $eLoginValido");
-        if(eLoginValido){
-            Future<DtoalunoLogin?> dadosAlunoFuture = AlunoService.recuperarAlunoSalvo();
-            DtoalunoLogin? dadosAluno = await dadosAlunoFuture; 
+    if (_raController.text.isNotEmpty && _userPasswordController.text.isNotEmpty) {
+        Future<DtoalunoLogin?> dadosAlunoFuture = AlunoService.recuperarAlunoSalvo();
+        DtoalunoLogin? dadosAluno = await dadosAlunoFuture; 
 
-            if (dadosAluno != null) {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => CarteirinhaPage()),
-              );
-              return; 
-            }else{
-              DtoalunoLogin dadosAlunoRecebidoDoBackend  = await solicitarValidacaoCarteirinha();
-              AlunoService.salvarAluno(dadosAlunoRecebidoDoBackend);
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => CarteirinhaPage()),
-              );
-
-                      }
+        // Se os dados do aluno já estiverem salvos localmente, vai direto para a CarteirinhaPage
+        if (dadosAluno != null /* && dadosAluno.ra == _raController.text*/) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => CarteirinhaPage()),
+          );
+          return; 
         }else{
-          showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: Text('Login inválido'),
-                      content: Text('Sua senha ou ra está incorreto, lembre-se que são os mesmos dados utilizados para acessar o cronos!'),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop(); 
-                          },
-                          child: Text('OK'),
-                        ),
-                      ],
-                    );
-                  },
+          DtoalunoLogin dadosAlunoRecebidoDoBackend  = await solicitarValidacaoCarteirinha();
+          if(dadosAlunoRecebidoDoBackend != null){
+            AlunoService.salvarAluno(dadosAlunoRecebidoDoBackend);
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => CarteirinhaPage()),
+            );
+
+          }else{
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text('Carteirinha não validada'),
+                  content: Text('Sua carteirinha ainda não foi validada. Por favor, aguarde a liberação da secretaria.'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Fecha o pop-up
+                      },
+                      child: Text('OK'),
+                    ),
+                  ],
                 );
-        }     
-      }
+              },
+            );
+          }
+        }
+    } 
   }
 
   @override
@@ -152,11 +117,53 @@ class _LoginPageState extends State<LoginPage> {
             Expanded(
               child: ListView(
                 children: <Widget>[
-                  SizedBox(height: 50),
+                  SizedBox(height: 20),
                   SizedBox(
                     width: 180,
                     height: 180,
                     child: Image.asset("assets/app/ifprlogo.png"),
+                  ),
+                  SizedBox(height: 20),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 40),
+                    child: Center(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            "ATENÇÃO",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          RichText(
+                            textAlign: TextAlign.center,
+                            text: TextSpan(
+                              style: TextStyle(fontSize: 16, color: Colors.black),
+                              children: [
+                                TextSpan(text: "Preencha os Campos com o "),
+                                TextSpan(
+                                  text: "RA",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                TextSpan(text: " e "),
+                                TextSpan(
+                                  text: "senha",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                TextSpan(text: " correspondentes ao do "),
+                                TextSpan(
+                                  text: "Cronos",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                TextSpan(text: "."),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                   SizedBox(height: 20),
                   // Padding RA
@@ -203,7 +210,7 @@ class _LoginPageState extends State<LoginPage> {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 40),
                     child: Text(
-                      "Senha",
+                      "Senha do Cronos",
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 20,
@@ -221,7 +228,7 @@ class _LoginPageState extends State<LoginPage> {
                       obscureText: !_passwordVisible,
                       decoration: InputDecoration(
                         floatingLabelBehavior: FloatingLabelBehavior.never,
-                        labelText: "Senha",
+                        labelText: "Senha do Cronos",
                         labelStyle: TextStyle(
                           color: Color.fromARGB(255, 172, 172, 172),
                           fontWeight: FontWeight.w400,
@@ -259,31 +266,6 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   SizedBox(height: 20),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 40),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Login com biometria",
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        Switch(
-                          value: _rememberMe,
-                          onChanged: (bool value) {
-                            setState(() {
-                              _rememberMe = value;
-                              if(_rememberMe){
-                                biometricService.autenticar();
-                                authenticateUser();
-                              }
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 20),
                   // Padding Acessar
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 40),
@@ -298,7 +280,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       child: TextButton(
                         child: Text(
-                          "Acessar",
+                          "Solicitar Cadastro",
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 20,
@@ -309,7 +291,6 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-                  // Padding Recuperar Senha
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 40),
                     child: Container(
