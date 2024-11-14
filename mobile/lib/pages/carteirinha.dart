@@ -1,4 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:wallet_mobile/dto/dto_aluno_login.dart';
 import 'package:wallet_mobile/pages/login.dart';
 import 'package:wallet_mobile/service/aluno_service.dart';
@@ -9,8 +12,10 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 
-Future<void> generatePDF(String nome, String curso, String anoEgresse, String validade) async {
+Future<void> generatePDF(String nome, String curso, String anoEgresse, String validade, Uint8List? imagemAluno,) async {
   final pdf = pw.Document();
+  final String dataGeracao = DateTime.now().toLocal().toString().split(' ')[0]; // Formata para 'YYYY-MM-DD'
+
 
   pdf.addPage(
     pw.Page(
@@ -27,32 +32,32 @@ Future<void> generatePDF(String nome, String curso, String anoEgresse, String va
             ),
             pw.SizedBox(height: 10),
             pw.Divider(color: PdfColors.green, thickness: 2),
+            pw.Divider(color: PdfColors.red, thickness: 2),
+            pw.SizedBox(height: 20),
+
+            if (imagemAluno != null) 
+            pw.Center(
+              child: pw.Image(
+                pw.MemoryImage(imagemAluno),
+                width: 100,
+                height: 100,
+              ),
+            ),
             pw.SizedBox(height: 20),
             
-            pw.Table.fromTextArray(
-              border: pw.TableBorder.all(color: PdfColors.grey),
-              cellAlignment: pw.Alignment.centerLeft,
-              headerDecoration: pw.BoxDecoration(color: PdfColors.grey300),
-              headerHeight: 25,
-              cellHeight: 40,
-              headerStyle: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
-              cellStyle: pw.TextStyle(fontSize: 16),
-              data: [
-                ['Nome:', nome],
-                ['Curso:', curso],
-                ['Ano de Egresso:', anoEgresse],
-                ['Validade:', validade],
-              ],
-            ),
+            pw.Text("Nome: $nome", style: pw.TextStyle(fontSize: 18)),
+            pw.Text("Curso: $curso", style: pw.TextStyle(fontSize: 18)),
+            pw.Text("Ano de Egresso: $anoEgresse", style: pw.TextStyle(fontSize: 18)),
+            pw.Text("Validade: $validade", style: pw.TextStyle(fontSize: 18)),
             pw.SizedBox(height: 20),
 
             pw.Divider(color: PdfColors.green, thickness: 2),
-            pw.Align(
-              alignment: pw.Alignment.bottomRight,
-              child: pw.Text(
-                "Instituto Federal do Paraná - IFPR",
-                style: pw.TextStyle(fontSize: 12, color: PdfColors.grey),
-              ),
+            pw.Divider(color: PdfColors.red, thickness: 2),
+            pw.Align(alignment: pw.Alignment.bottomRight,
+            child: pw.Text(
+              "Gerado em: $dataGeracao",
+              style: pw.TextStyle(fontSize: 12, color: PdfColors.grey),
+            ),
             ),
           ],
         );
@@ -63,6 +68,11 @@ Future<void> generatePDF(String nome, String curso, String anoEgresse, String va
   await Printing.layoutPdf(
     onLayout: (PdfPageFormat format) async => pdf.save(),
   );
+}
+
+Future<Uint8List> _loadAlunoImage() async {
+  final ByteData data = await rootBundle.load('assets/app/user.png');
+  return data.buffer.asUint8List();
 }
 
 class CarteirinhaPage extends StatelessWidget {
@@ -135,11 +145,20 @@ class CarteirinhaPage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         ElevatedButton(
-                          onPressed: () {
-                            generatePDF("Renato Augusto Platz Guimarães Neto", "Bacharelado em Engenharia de Software", "2022", "12/2025");
-                          },
-                          child: Text('Exportar para PDF'),
-                        ),
+  onPressed: () async {
+    Uint8List imagemAluno = await _loadAlunoImage(); // Carrega a imagem do aluno
+
+    generatePDF(
+      aluno?.nome ?? 'Nome não disponível',
+      curso,
+      ingresso,
+      validade,
+      imagemAluno, // Passa a imagem carregada
+    );
+  },
+  child: Text('Exportar para PDF'),
+),
+
                       ],
                     ),
                     Spacer(),
