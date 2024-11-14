@@ -84,14 +84,6 @@ class _CadastroPageState extends State<CadastroPage> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              "•Tire uma foto do próprio rosto, de preferência atrás de uma parede branca;\n\n"
-              "•Retire óculos, chapéu e qualquer outro acessório que cubra seu rosto.",
-              style: TextStyle(
-                fontSize: 14, 
-                color: const Color.fromARGB(238, 0, 0, 0),
-              ),
-            ),
             SizedBox(height: 10),
             ListTile(
               leading: Icon(Icons.camera_alt),
@@ -239,7 +231,7 @@ void _showSuccessDialog() {
         title: Text("Voltar"),
       ),
       body: Container(
-        padding: EdgeInsets.only(top: 60),
+        padding: EdgeInsets.only(top: 40),
         color: Colors.white,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -272,12 +264,44 @@ void _showSuccessDialog() {
                       ],
                     ),
                   ),
-                  SizedBox(
-                    width: 90,
-                    height: 90,
-                    child: Image.asset("assets/app/selfie.png"),
+                  SizedBox(height: 10),
+                  Align(
+                  alignment: Alignment.centerLeft,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                    Expanded(
+                      child: Padding(
+                      padding: const EdgeInsets.only(left: 50.0, right: 1.0, top: 16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                        SizedBox(height: 20),
+                        Text(
+                          "•Tire uma foto do próprio rosto de costas a uma parede branca;\n\n" 
+                          "•Retire quaisquer acessórios, como óculos ou chapéu.",
+                          style: TextStyle(
+                          fontSize: 15,
+                          color: Color.fromARGB(238, 0, 0, 0),
+                          ),
+                          textAlign: TextAlign.left,
+                        ),
+                        ],
+                      ),
+                      ),
+                    ),
+                    Transform.translate(
+                      offset: Offset(34, 0), // Mova 50 pixels para a direita, se necessário
+                      child: SizedBox(
+                      width: 180,
+                      height: 180,
+                      child: Image.asset("assets/app/selfie.png"),
+                      ),
+                      ),
+                      ],
+                    ),
                   ),
-                  SizedBox(height: 40),
+                  SizedBox(height: 50),
                   // Botão "Solicitar Cadastro"
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 40),
