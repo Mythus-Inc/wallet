@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+import 'dart:typed_data';
+>>>>>>> 762e489 (Feat: Adicionada a data de geração do PDF)
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,6 +15,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 
+<<<<<<< HEAD
 Future<void> generatePDF(String nome, String curso, String anoEgresse, String validade, Uint8List? imagemAluno) async {
   final pdf = pw.Document();
   final String dataGeracao = DateTime.now().toLocal().toString().split(' ')[0];
@@ -19,11 +24,18 @@ Future<void> generatePDF(String nome, String curso, String anoEgresse, String va
   final ByteData ifprLogoData = await rootBundle.load('assets/app/ifprLogo.png');
   final Uint8List ifprLogoBytes = ifprLogoData.buffer.asUint8List();
   final pw.ImageProvider ifprLogo = pw.MemoryImage(ifprLogoBytes);
+=======
+Future<void> generatePDF(String nome, String curso, String anoEgresse, String validade, Uint8List? imagemAluno,) async {
+  final pdf = pw.Document();
+  final String dataGeracao = DateTime.now().toLocal().toString().split(' ')[0]; // Formata para 'YYYY-MM-DD'
+
+>>>>>>> 762e489 (Feat: Adicionada a data de geração do PDF)
 
   pdf.addPage(
     pw.Page(
       pageFormat: PdfPageFormat.a4,
       build: (pw.Context context) {
+<<<<<<< HEAD
         return pw.Container(
           decoration: pw.BoxDecoration(
             border: pw.Border.all(color: PdfColors.green, width: 3),
@@ -126,6 +138,47 @@ Future<void> generatePDF(String nome, String curso, String anoEgresse, String va
               ],
             ),
           ),
+=======
+        return pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.stretch,
+          children: [
+            pw.Container(
+              color: PdfColors.green,
+              height: 50,
+              alignment: pw.Alignment.center,
+              child: pw.Text("Carteirinha do Aluno", style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold, color: PdfColors.white)),
+            ),
+            pw.SizedBox(height: 10),
+            pw.Divider(color: PdfColors.green, thickness: 2),
+            pw.Divider(color: PdfColors.red, thickness: 2),
+            pw.SizedBox(height: 20),
+
+            if (imagemAluno != null) 
+            pw.Center(
+              child: pw.Image(
+                pw.MemoryImage(imagemAluno),
+                width: 100,
+                height: 100,
+              ),
+            ),
+            pw.SizedBox(height: 20),
+            
+            pw.Text("Nome: $nome", style: pw.TextStyle(fontSize: 18)),
+            pw.Text("Curso: $curso", style: pw.TextStyle(fontSize: 18)),
+            pw.Text("Ano de Egresso: $anoEgresse", style: pw.TextStyle(fontSize: 18)),
+            pw.Text("Validade: $validade", style: pw.TextStyle(fontSize: 18)),
+            pw.SizedBox(height: 20),
+
+            pw.Divider(color: PdfColors.green, thickness: 2),
+            pw.Divider(color: PdfColors.red, thickness: 2),
+            pw.Align(alignment: pw.Alignment.bottomRight,
+            child: pw.Text(
+              "Gerado em: $dataGeracao",
+              style: pw.TextStyle(fontSize: 12, color: PdfColors.grey),
+            ),
+            ),
+          ],
+>>>>>>> 762e489 (Feat: Adicionada a data de geração do PDF)
         );
       },
     ),
@@ -136,6 +189,7 @@ Future<void> generatePDF(String nome, String curso, String anoEgresse, String va
   );
 }
 
+<<<<<<< HEAD
 // Helper method to create consistent detail rows
 pw.Widget _buildDetailRow(String label, String value) {
   return pw.Padding(
@@ -163,6 +217,8 @@ pw.Widget _buildDetailRow(String label, String value) {
     ),
   );
 }
+=======
+>>>>>>> 762e489 (Feat: Adicionada a data de geração do PDF)
 Future<Uint8List> _loadAlunoImage() async {
   final ByteData data = await rootBundle.load('assets/app/user.png');
   return data.buffer.asUint8List();
