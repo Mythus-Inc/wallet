@@ -1,4 +1,5 @@
-import 'dart:io';
+import 'dart:convert';  // Para codificar a imagem em base64
+import 'dart:io';  // Para o File
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
@@ -75,16 +76,15 @@ class _CadastroPageState extends State<CadastroPage> {
   }
 
   void _onButtonPressed() {
-  _sendImageToServer().then((_) {
-    // Navega para a página de solicitação de cadastro
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => LoginPage()),
-    );
-  }).catchError((error) {
-    print("Erro: $error");
-  });
-}
-
+    _sendImageToServer().then((_) {
+      // Navega para a página de solicitação de cadastro
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
+    }).catchError((error) {
+      print("Erro: $error");
+    });
+  }
 
   Future<void> _sendImageToServer() async {
     try {
@@ -93,10 +93,12 @@ class _CadastroPageState extends State<CadastroPage> {
       var request = http.MultipartRequest('POST', url);
 
       if (_imageFile != null) {
-        request.files.add(await http.MultipartFile.fromPath(
-          'foto', // Nome do campo esperado pelo backend
-          _imageFile!.path,
-        ));
+        // Converte a imagem para base64
+        List<int> imageBytes = await _imageFile!.readAsBytes();
+        String base64Image = base64Encode(imageBytes);
+
+        // Envia a imagem como base64 no corpo da requisição
+        request.fields['foto'] = base64Image;
       }
 
       var response = await request.send();
