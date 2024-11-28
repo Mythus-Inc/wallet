@@ -154,11 +154,11 @@ class _LoginPageState extends State<LoginPage> {
                 children: <Widget>[
                   SizedBox(height: 50),
                   SizedBox(
-                    width: 180,
-                    height: 180,
+                    width: 90,
+                    height: 90,
                     child: Image.asset("assets/app/ifprlogo.png"),
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 30),
                   // Padding RA
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 40),

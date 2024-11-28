@@ -4,7 +4,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:wallet_mobile/components/footer.dart';
 import 'package:wallet_mobile/pages/login.dart';
-import 'package:wallet_mobile/pages/solicitarCadastro.dart';
 
 class CadastroPage extends StatefulWidget {
   @override
@@ -208,7 +207,7 @@ class _CadastroPageState extends State<CadastroPage> {
                             fontSize: 20,
                           ),
                         ),
-                        onPressed: _isFormValid() ? _onButtonPressed : null, // Desabilita o botão quando a imagem não foi anexada.
+                        onPressed: _isFormValid() ? _onButtonPressed : null, 
                       ),
                     ),
                   ),
