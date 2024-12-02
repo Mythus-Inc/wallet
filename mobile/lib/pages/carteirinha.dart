@@ -214,7 +214,7 @@ class CarteirinhaPage extends StatelessWidget {
               'validade': validade,
             };
 
-            // Aqui construa o layout da página com os dados do aluno
+
             return LayoutBuilder(
               builder: (context, constraints) {
                 final double screenHeight = constraints.maxHeight;
