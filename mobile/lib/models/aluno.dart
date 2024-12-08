@@ -1,8 +1,5 @@
 
-import 'dart:convert';
 
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:wallet_mobile/values/preferences_key.dart';
 
 class Aluno {
   String? nome;

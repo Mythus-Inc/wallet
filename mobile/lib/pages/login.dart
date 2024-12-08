@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wallet_mobile/dto/dto_aluno_login.dart';
 import 'package:wallet_mobile/pages/carteirinha.dart';
 import 'package:wallet_mobile/pages/cadastro.dart';
@@ -92,32 +91,12 @@ class _LoginPageState extends State<LoginPage> {
           return; 
         }else{
           DtoalunoLogin dadosAlunoRecebidoDoBackend  = await solicitarValidacaoCarteirinha();
-          if(dadosAlunoRecebidoDoBackend != null){
-            AlunoService.salvarAluno(dadosAlunoRecebidoDoBackend);
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => CarteirinhaPage()),
-            );
+          AlunoService.salvarAluno(dadosAlunoRecebidoDoBackend);
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => CarteirinhaPage()),
+          );
 
-          }else{
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: Text('Carteirinha não validada'),
-                  content: Text('Sua carteirinha ainda não foi validada. Por favor, aguarde a liberação da secretaria.'),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop(); // Fecha o pop-up
-                      },
-                      child: Text('OK'),
-                    ),
-                  ],
-                );
-              },
-            );
-          }
-        }
+                }
     } 
   }
 
