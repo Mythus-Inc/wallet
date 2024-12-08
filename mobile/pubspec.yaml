@@ -40,6 +40,7 @@ dependencies:
   shared_preferences: ^2.0.15
   http: ^0.13.0
   image_picker: ^0.8.4+4
+  convert: ^3.0.1
 
   
   
@@ -86,6 +87,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/app/ifprlogo.png
+    - assets/app/selfie.png
     
 
   # An image asset can refer to one or more resolution-specific "variants", see

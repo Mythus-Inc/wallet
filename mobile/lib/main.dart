@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import './pages/login.dart';
+import './pages/solicitarCadastro.dart';
 
 void main() {
   runApp(MyApp());
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.greenAccent),
         useMaterial3: true,
       ),
-      home: LoginPage(),
+      home: requestRegistrationPage(),
     );
   }
 }

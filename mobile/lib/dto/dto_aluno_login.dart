@@ -1,5 +1,4 @@
 import 'package:wallet_mobile/dto/dto_aluno_turma.dart';
-import 'package:wallet_mobile/models/aluno.dart';
 
 class DtoalunoLogin{
   final String ra;
