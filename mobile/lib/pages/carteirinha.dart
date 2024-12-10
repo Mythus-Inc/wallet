@@ -4,6 +4,8 @@ import 'package:wallet_mobile/pages/login.dart';
 import 'package:wallet_mobile/service/aluno_service.dart';
 import '../components/header.dart';
 import '../components/footer.dart';
+import 'package:pretty_qr_code/pretty_qr_code.dart';
+
 
 class CarteirinhaPage extends StatelessWidget {
   Future<DtoalunoLogin?> dadosAluno = AlunoService.recuperarAlunoSalvo();
@@ -106,7 +108,7 @@ class CarouselWidget extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         children: <Widget>[
           _buildInfoItem(idInformation), // First item shows ID information
-          _buildQRCodeItem(), // Second item shows a QR code
+         _buildQRCodeItem(idInformation['ra'] ?? ''), // Second item shows a QR code
         ],
       ),
     );
@@ -317,17 +319,27 @@ class CarouselWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildQRCodeItem() {
+ Widget _buildQRCodeItem(String ra) {
     return Container(
       color: Colors.white,
       child: Center(
         child: Container(
-          width: 500.0, // Increase the width
-          height: 500.0, // Increase the height
-          child: Icon(Icons.qr_code,
-              size: 250, color: Colors.black), // Make the QR code icon larger
+          width: 250.0, // Largura do container
+          height: 250.0, // Altura do container
+          child: PrettyQrView.data(
+            data: "$ra - Carteirinha Aprovada",  // Dados para gerar o QR Code
+            errorCorrectLevel: QrErrorCorrectLevel.M, // Nível de correção de erro
+            decoration: const PrettyQrDecoration(
+              shape: PrettyQrSmoothSymbol(), // Define o estilo do símbolo (borda arredondada)
+              image: PrettyQrDecorationImage(
+                image: AssetImage('assets/app/icon.png'),
+                position: PrettyQrDecorationImagePosition.embedded,
+              ),
+            ),
+          ),
         ),
       ),
     );
   }
 }
+
