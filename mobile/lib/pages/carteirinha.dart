@@ -320,26 +320,29 @@ class CarouselWidget extends StatelessWidget {
   }
 
  Widget _buildQRCodeItem(String ra) {
-    return Container(
-      color: Colors.white,
-      child: Center(
-        child: Container(
-          width: 250.0, // Largura do container
-          height: 250.0, // Altura do container
-          child: PrettyQrView.data(
-            data: "$ra - Carteirinha Aprovada",  // Dados para gerar o QR Code
-            errorCorrectLevel: QrErrorCorrectLevel.M, // Nível de correção de erro
-            decoration: const PrettyQrDecoration(
-              shape: PrettyQrSmoothSymbol(), // Define o estilo do símbolo (borda arredondada)
-              image: PrettyQrDecorationImage(
-                image: AssetImage('assets/app/icon.png'),
-                position: PrettyQrDecorationImagePosition.embedded,
-              ),
+  return Container(
+    color: Colors.white,
+    child: Center(
+      child: Container(
+        width: 250.0, // Largura do container
+        height: 250.0, // Altura do container
+        child: PrettyQrView.data(
+          data: "$ra - Carteirinha Aprovada",  // Dados para gerar o QR Code
+          errorCorrectLevel: QrErrorCorrectLevel.M, // Nível de correção de erro
+          decoration: const PrettyQrDecoration(
+            shape: const PrettyQrSmoothSymbol(), // Define o estilo do símbolo (borda arredondada)
+            image: PrettyQrDecorationImage(
+              image: AssetImage('assets/app/ifprlogosmall.png'),
+              position: PrettyQrDecorationImagePosition.embedded, // Coloca a imagem no centro
+              scale: 0.2,  // Ajuste a escala da imagem para controlar o tamanho
+              fit: BoxFit.contain,  // Garante que a imagem se ajuste corretamente
             ),
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 }
 
