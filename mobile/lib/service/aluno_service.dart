@@ -13,26 +13,14 @@ class AlunoService{
 
   // Aqui deve ter um método que busca os dados de aluno no Backend (cronos)!!
 
-  // static Future<DtoalunoLogin?> recuperarAlunoSalvo() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   String? alunoJson = prefs.getString(PreferencesKey.chaveAcessoOuSobreescrita);
-    
-  //   if (alunoJson != null) {
-  //     Map<String, dynamic> alunoMap = json.decode(alunoJson);
-  //     return DtoalunoLogin.fromJson(alunoMap);
-  //   }
-  //   return null;
-  // }
   static Future<DtoalunoLogin?> recuperarAlunoSalvo() async {
-  // Simula que a operação foi bem-sucedida e retorna dados fixos
-  return Future.value(
-    DtoalunoLogin(
-      nome: 'João Silva',
-      ra: '123456',
-      alunoTurma: null, // Ou uma lista vazia, conforme necessário
-    ),
-  );
-}
-
-
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? alunoJson = prefs.getString(PreferencesKey.chaveAcessoOuSobreescrita);
+    
+    if (alunoJson != null) {
+      Map<String, dynamic> alunoMap = json.decode(alunoJson);
+      return DtoalunoLogin.fromJson(alunoMap);
+    }
+    return null;
+  }
 }

@@ -336,6 +336,7 @@ class CarouselWidget extends StatelessWidget {
               position: PrettyQrDecorationImagePosition.embedded, // Coloca a imagem no centro
               scale: 0.2,  // Ajuste a escala da imagem para controlar o tamanho
               fit: BoxFit.contain,  // Garante que a imagem se ajuste corretamente
+              padding: EdgeInsets.all(50), // Ajuste o padding para garantir que a imagem seja centralizada
             ),
           ),
         ),
@@ -343,6 +344,7 @@ class CarouselWidget extends StatelessWidget {
     ),
   );
 }
+
 
 }
 
