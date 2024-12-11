@@ -44,6 +44,8 @@ dependencies:
   pretty_qr_code: ^3.3.0
   convert: ^3.0.1
 
+  pdf: ^3.11.1
+  printing: ^5.13.4
   
   
   
@@ -88,9 +90,18 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - assets/app/ifprLogo.png
+    - assets/app/brasao.png
     - assets/app/ifprlogo.png
+<<<<<<< HEAD
     - assets/app/ifprlogosmall.png
     - assets/app/selfie.png
+=======
+<<<<<<< HEAD
+    - assets/app/user.png
+=======
+>>>>>>> 4e061ea (Feat: Trabalhando no design do pdf)
+>>>>>>> main
     
 
   # An image asset can refer to one or more resolution-specific "variants", see
