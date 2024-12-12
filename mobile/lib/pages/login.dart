@@ -75,7 +75,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<bool> loginCronos() async {
   
-    var url = Uri.parse('http://192.168.80.215:8080/cronos/rest/service/login');
+    var url = Uri.parse('http://192.168.87.215:8080/cronos/rest/service/login');
     var response = await http.post(
       url,
       headers: {'Content-Type': 'application/json; charset=UTF-8'},
@@ -117,7 +117,7 @@ class _LoginPageState extends State<LoginPage> {
                 MaterialPageRoute(builder: (context) => CarteirinhaPage()),
               );
 
-                      }
+            }
         }else{
           showDialog(
                   context: context,
