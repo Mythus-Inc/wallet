@@ -97,7 +97,7 @@ class _CadastroPageState extends State<CadastroPage> {
 
 Future<void> _sendImageToServer() async {
  
-    var url = Uri.parse('http://192.168.165.215:8080/cronos/rest/service/solicitacao-carteirinha');
+    var url = Uri.parse('http://192.168.6.215:8080/cronos/rest/service/solicitacao-carteirinha');
     var headers = {'Content-Type': 'application/json; charset=UTF-8'};
  
 
