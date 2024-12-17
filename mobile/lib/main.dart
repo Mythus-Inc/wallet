@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import './pages/solicitarCadastro.dart';
+//import './pages/solicitarCadastro.dart';
 import 'package:flutter/services.dart'; // Importe necessário para definir a orientação da tela
 import './pages/login.dart';
 
@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.greenAccent),
         useMaterial3: true,
       ),
-      home: requestRegistrationPage(),
+      home: LoginPage(),
     );
   }
 }

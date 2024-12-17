@@ -7,7 +7,7 @@ import 'package:wallet_mobile/service/aluno_service.dart';
 import '../components/header.dart';
 import '../components/footer.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:printing/printing.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -16,6 +16,7 @@ import 'package:pdf/widgets.dart' as pw;
 Future<void> generatePDF(String nome, String curso, String anoEgresse, String validade, Uint8List? imagemAluno) async {
   final pdf = pw.Document();
   final String dataGeracao = DateTime.now().toLocal().toString().split(' ')[0];
+  String? caminhoFoto;
 
   // Load institutional logo
   final ByteData ifprLogoData = await rootBundle.load('assets/app/ifprLogo.png');
@@ -173,6 +174,14 @@ Future<Uint8List> _loadAlunoImage() async {
 class CarteirinhaPage extends StatelessWidget {
   final Future<DtoalunoLogin?> dadosAluno = AlunoService.recuperarAlunoSalvo();
 
+
+  Future<void> _loadCaminhoFoto() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState() {
+      var caminhoFoto = prefs.getString('caminhoFotoAluno') ?? '';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -233,7 +242,7 @@ class CarteirinhaPage extends StatelessWidget {
                   children: [
                     Container(
                       height: carouselHeight,
-                      child: CarouselWidget(idInformation: idInformation),
+                      child: CarouselWidget(idInformation: idInformation, caminhoFoto: caminhoFoto),
                     ),
                     SizedBox(height: 25),
                     Row(
@@ -272,7 +281,7 @@ class CarteirinhaPage extends StatelessWidget {
 class CarouselWidget extends StatefulWidget {
   final Map<String, String> idInformation;
 
-  CarouselWidget({required this.idInformation});
+  CarouselWidget({required this.idInformation, required caminhoFoto});
 
   @override
   _CarouselWidgetState createState() => _CarouselWidgetState();
@@ -285,16 +294,6 @@ class _CarouselWidgetState extends State<CarouselWidget> {
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
 
-    return Container(
-      width: screenWidth,
-      color: Colors.white,
-      child: PageView(
-        scrollDirection: Axis.horizontal,
-        children: <Widget>[
-          _buildInfoItem(idInformation), // First item shows ID information
-         _buildQRCodeItem(idInformation['ra'] ?? ''), // Second item shows a QR code
-        ],
-      ),
     return Column(
       children: [
         Expanded(
@@ -311,7 +310,7 @@ class _CarouselWidgetState extends State<CarouselWidget> {
               },
               children: <Widget>[
                 _buildInfoItem(widget.idInformation), // Primeira página
-                _buildQRCodeItem(), // Segunda página
+                _buildQRCodeItem(widget.idInformation['ra'] ?? ''), // Segunda página
               ],
             ),
           ),
@@ -512,12 +511,23 @@ class _CarouselWidgetState extends State<CarouselWidget> {
                   height: 200, // Height of the placeholder
                   color:
                       Colors.grey[300], // Background color of the placeholder
-                  child: Center(
-                    child: Icon(
-                      Icons.image, // Icon representing the image placeholder
-                      color: Colors.grey[700],
-                      size: 50, // Size of the icon
-                    ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children :[
+                      if (caminhoFoto != null) // Verifica se há uma imagem salva
+          Container(
+            width: 130,
+            height: 130,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              image: DecorationImage(
+                image: FileImage(File(caminhoFoto!)), // Exibe a imagem do caminho salvo
+                fit: BoxFit.cover,
+              ),
+            ),
+          )
+        else
+          Icon(Icons.image_not_supported, size: 130, color: Colors.grey), ],
                   ),
                 ),
               ),
@@ -564,7 +574,7 @@ class _CarouselWidgetState extends State<CarouselWidget> {
     );
   }
 
- Widget _buildQRCodeItem(String ra) {
+Widget _buildQRCodeItem(String ra) {
   return Container(
     color: Colors.white,
     child: Center(
@@ -592,4 +602,3 @@ class _CarouselWidgetState extends State<CarouselWidget> {
 
 
 }
-

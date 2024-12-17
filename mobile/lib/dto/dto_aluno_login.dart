@@ -5,7 +5,7 @@ class DtoalunoLogin{
   String? nome;
   String? email;
   String? senha;
-  
+  String? foto;
   List<DtoAlunoTurma>? alunoTurma;
 
 
@@ -15,6 +15,7 @@ class DtoalunoLogin{
     this.email,
     this.senha,
     this.alunoTurma,
+    this.foto,
   });
   
   Map<String, dynamic> toJson()  {
@@ -23,6 +24,7 @@ class DtoalunoLogin{
       'nome': nome,
       'email': email,
       'senha': senha,
+      'foto': foto,
       'alunoTurma': alunoTurma?.map((turma) => turma.toJson()).toList() ?? []
     };
   }
@@ -33,6 +35,7 @@ class DtoalunoLogin{
       email: json['email'],
       senha: json['senha'],
       ra: json['ra'],
+      foto: json['foto'],
       alunoTurma: (json['alunoTurma'] as List<dynamic>?)
           ?.map((turma) => DtoAlunoTurma.fromJson(turma))
           .toList(),

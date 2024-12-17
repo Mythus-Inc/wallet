@@ -1,10 +1,14 @@
-import 'dart:convert';  // Para codificar a imagem em base64
-import 'dart:io';  // Para o File
+import 'dart:convert'; // Para codificar a imagem em base64
+import 'dart:io'; // Para o File
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:http/http.dart' as http;
 import 'package:wallet_mobile/components/footer.dart';
 import 'package:wallet_mobile/pages/login.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class CadastroPage extends StatefulWidget {
   @override
@@ -24,15 +28,37 @@ class _CadastroPageState extends State<CadastroPage> {
     super.dispose();
   }
 
-  pick(ImageSource source) async {
-    final pickedFile = await _picker.pickImage(source: source);
-
-    if (pickedFile != null) {
-      setState(() {
-        _imageFile = File(pickedFile.path);
-      });
-    }
+Future<void> _requestStoragePermission() async {
+  if (await Permission.storage.request().isGranted) {
+    print("Permissão concedida.");
+    // Chame o método para salvar a imagem
+  } else {
+    print("Permissão negada.");
   }
+}
+
+  // Método para tirar a foto
+pick(ImageSource source) async {
+  await _requestStoragePermission();
+  final pickedFile = await _picker.pickImage(source: source);
+
+  if (pickedFile != null) {
+    setState(() {
+      _imageFile = File(pickedFile.path);
+    });
+
+    // Salva a imagem na galeria
+    final result = await ImageGallerySaver.saveFile(pickedFile.path);
+    print("Imagem salva na galeria: $result");
+
+    // Armazena o caminho da imagem no SharedPreferences
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('caminhoFotoAluno', pickedFile.path);
+    print("Caminho salvo: ${pickedFile.path}");
+  } else {
+    print("Nenhuma imagem foi selecionada.");
+  }
+}
 
   void _removeImage() {
     setState(() {
@@ -76,15 +102,17 @@ class _CadastroPageState extends State<CadastroPage> {
   }
 
   void _onButtonPressed() {
-    _sendImageToServer().then((_) {
-      // Navega para a página de solicitação de cadastro
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => LoginPage()),
-      );
-    }).catchError((error) {
-      print("Erro: $error");
-    });
-  }
+  _sendImageToServer().then((_) {
+    // Navega para a página de solicitação de cadastro
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => LoginPage()),
+    );
+    return null; // Adicione explicitamente um retorno nulo
+  }).catchError((error) {
+    print("Erro: $error");
+  });
+}
+
 
   Future<void> _sendImageToServer() async {
     try {
@@ -209,7 +237,7 @@ class _CadastroPageState extends State<CadastroPage> {
                             fontSize: 20,
                           ),
                         ),
-                        onPressed: _isFormValid() ? _onButtonPressed : null, 
+                        onPressed: _isFormValid() ? _onButtonPressed : null,
                       ),
                     ),
                   ),
