@@ -2,12 +2,13 @@ import 'dart:convert'; // Para codificar a imagem em base64
 import 'dart:io'; // Para o File
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:http/http.dart' as http;
 import 'package:wallet_mobile/components/footer.dart';
 import 'package:wallet_mobile/pages/login.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+// Para ByteData
+import 'package:gallery_saver/gallery_saver.dart'; // Para salvar a imagem na galeria
 
 
 class CadastroPage extends StatefulWidget {
@@ -48,7 +49,7 @@ pick(ImageSource source) async {
     });
 
     // Salva a imagem na galeria
-    final result = await ImageGallerySaver.saveFile(pickedFile.path);
+    final result = await GallerySaver.saveImage(pickedFile.path);
     print("Imagem salva na galeria: $result");
 
     // Armazena o caminho da imagem no SharedPreferences
@@ -65,6 +66,8 @@ pick(ImageSource source) async {
       _imageFile = null;
     });
   }
+
+  
 
   void _showAvatarOptions(BuildContext context) {
     showDialog(

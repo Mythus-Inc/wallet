@@ -1,3 +1,4 @@
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,12 +12,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:printing/printing.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'package:image_picker/image_picker.dart'; // Para selecionar a imagem da galeria
 
 
 Future<void> generatePDF(String nome, String curso, String anoEgresse, String validade, Uint8List? imagemAluno) async {
   final pdf = pw.Document();
   final String dataGeracao = DateTime.now().toLocal().toString().split(' ')[0];
-  String? caminhoFoto;
 
   // Load institutional logo
   final ByteData ifprLogoData = await rootBundle.load('assets/app/ifprLogo.png');
@@ -166,21 +167,20 @@ pw.Widget _buildDetailRow(String label, String value) {
     ),
   );
 }
-Future<Uint8List> _loadAlunoImage() async {
-  final ByteData data = await rootBundle.load('assets/app/user.png');
-  return data.buffer.asUint8List();
+Future<Uint8List?> _loadAlunoImage() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? imagePath = prefs.getString('caminhoFotoAluno');
+  
+  if (imagePath != null) {
+    File imageFile = File(imagePath);
+    return imageFile.readAsBytes();
+  }
+  
+  return null;
 }
 
 class CarteirinhaPage extends StatelessWidget {
   final Future<DtoalunoLogin?> dadosAluno = AlunoService.recuperarAlunoSalvo();
-
-
-  Future<void> _loadCaminhoFoto() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState() {
-      var caminhoFoto = prefs.getString('caminhoFotoAluno') ?? '';
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -242,27 +242,38 @@ class CarteirinhaPage extends StatelessWidget {
                   children: [
                     Container(
                       height: carouselHeight,
-                      child: CarouselWidget(idInformation: idInformation, caminhoFoto: caminhoFoto),
+                      child: FutureBuilder<Uint8List?>(
+                        future: _loadAlunoImage(), // Carrega a imagem do aluno
+                        builder: (context, imageSnapshot) {
+                          if (imageSnapshot.connectionState == ConnectionState.waiting) {
+                            return Center(child: CircularProgressIndicator());
+                          } else {
+                            return CarouselWidget(
+                              idInformation: idInformation,
+                              alunoImage: imageSnapshot.data,
+                            );
+                          }
+                        },
+                      ),
                     ),
                     SizedBox(height: 25),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         ElevatedButton(
-  onPressed: () async {
-    Uint8List imagemAluno = await _loadAlunoImage(); // Carrega a imagem do aluno
+                          onPressed: () async {
+                            Uint8List? imagemAluno = await _loadAlunoImage(); // Carrega a imagem do aluno
 
-    generatePDF(
-      aluno?.nome ?? 'Nome não disponível',
-      curso,
-      ingresso,
-      validade,
-      imagemAluno, // Passa a imagem carregada
-    );
-  },
-  child: Text('Exportar para PDF'),
-),
-
+                            generatePDF(
+                              aluno?.nome ?? 'Nome não disponível',
+                              curso,
+                              ingresso,
+                              validade,
+                              imagemAluno, // Passa a imagem carregada
+                            );
+                          },
+                          child: Text('Exportar para PDF'),
+                        ),
                       ],
                     ),
                     Spacer(),
@@ -280,8 +291,9 @@ class CarteirinhaPage extends StatelessWidget {
 
 class CarouselWidget extends StatefulWidget {
   final Map<String, String> idInformation;
+  final Uint8List? alunoImage;
 
-  CarouselWidget({required this.idInformation, required caminhoFoto});
+  CarouselWidget({required this.idInformation, this.alunoImage});
 
   @override
   _CarouselWidgetState createState() => _CarouselWidgetState();
@@ -309,7 +321,7 @@ class _CarouselWidgetState extends State<CarouselWidget> {
                 });
               },
               children: <Widget>[
-                _buildInfoItem(widget.idInformation), // Primeira página
+                _buildInfoItem(widget.idInformation, widget.alunoImage), // Primeira página
                 _buildQRCodeItem(widget.idInformation['ra'] ?? ''), // Segunda página
               ],
             ),
@@ -336,7 +348,7 @@ class _CarouselWidgetState extends State<CarouselWidget> {
     );
   }
 
-  Widget _buildInfoItem(Map<String, String> info) {
+  Widget _buildInfoItem(Map<String, String> info, Uint8List? alunoImage) {
     return Container(
       color: Colors.white,
       padding: EdgeInsets.all(16.0),
@@ -511,24 +523,18 @@ class _CarouselWidgetState extends State<CarouselWidget> {
                   height: 200, // Height of the placeholder
                   color:
                       Colors.grey[300], // Background color of the placeholder
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children :[
-                      if (caminhoFoto != null) // Verifica se há uma imagem salva
-          Container(
-            width: 130,
-            height: 130,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              image: DecorationImage(
-                image: FileImage(File(caminhoFoto!)), // Exibe a imagem do caminho salvo
-                fit: BoxFit.cover,
-              ),
-            ),
-          )
-        else
-          Icon(Icons.image_not_supported, size: 130, color: Colors.grey), ],
-                  ),
+                  child: alunoImage != null
+                      ? Image.memory(
+                          alunoImage,
+                          fit: BoxFit.cover,
+                        )
+                      : Center(
+                          child: Icon(
+                            Icons.image, // Icon representing the image placeholder
+                            color: Colors.grey[700],
+                            size: 50, // Size of the icon
+                          ),
+                        ),
                 ),
               ),
               Padding(
@@ -574,31 +580,29 @@ class _CarouselWidgetState extends State<CarouselWidget> {
     );
   }
 
-Widget _buildQRCodeItem(String ra) {
-  return Container(
-    color: Colors.white,
-    child: Center(
-      child: Container(
-        width: 250.0, // Largura do container
-        height: 250.0, // Altura do container
-        child: PrettyQrView.data(
-          data: "$ra - Carteirinha Aprovada",  // Dados para gerar o QR Code
-          errorCorrectLevel: QrErrorCorrectLevel.M, // Nível de correção de erro
-          decoration: const PrettyQrDecoration(
-            shape: const PrettyQrSmoothSymbol(), // Define o estilo do símbolo (borda arredondada)
-            image: PrettyQrDecorationImage(
-              image: AssetImage('assets/app/ifprlogosmall.png'),
-              position: PrettyQrDecorationImagePosition.embedded, // Coloca a imagem no centro
-              scale: 0.2,  // Ajuste a escala da imagem para controlar o tamanho
-              fit: BoxFit.contain,  // Garante que a imagem se ajuste corretamente
-              padding: EdgeInsets.all(50), // Ajuste o padding para garantir que a imagem seja centralizada
+  Widget _buildQRCodeItem(String ra) {
+    return Container(
+      color: Colors.white,
+      child: Center(
+        child: Container(
+          width: 250.0, // Largura do container
+          height: 250.0, // Altura do container
+          child: PrettyQrView.data(
+            data: "$ra - Carteirinha Aprovada",  // Dados para gerar o QR Code
+            errorCorrectLevel: QrErrorCorrectLevel.M, // Nível de correção de erro
+            decoration: const PrettyQrDecoration(
+              shape: const PrettyQrSmoothSymbol(), // Define o estilo do símbolo (borda arredondada)
+              image: PrettyQrDecorationImage(
+                image: AssetImage('assets/app/ifprlogosmall.png'),
+                position: PrettyQrDecorationImagePosition.embedded, // Coloca a imagem no centro
+                scale: 0.2,  // Ajuste a escala da imagem para controlar o tamanho
+                fit: BoxFit.contain,  // Garante que a imagem se ajuste corretamente
+                padding: EdgeInsets.all(50), // Ajuste o padding para garantir que a imagem seja centralizada
+              ),
             ),
           ),
         ),
       ),
-    ),
-  );
-}
-
-
+    );
+  }
 }

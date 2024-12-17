@@ -76,32 +76,12 @@ class _LoginPageState extends State<requestRegistrationPage> {
           return; 
         }else{
           DtoalunoLogin dadosAlunoRecebidoDoBackend  = await solicitarValidacaoCarteirinha();
-          if(dadosAlunoRecebidoDoBackend != null){
-            AlunoService.salvarAluno(dadosAlunoRecebidoDoBackend);
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => CarteirinhaPage()),
-            );
+          AlunoService.salvarAluno(dadosAlunoRecebidoDoBackend);
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => CarteirinhaPage()),
+          );
 
-          }else{
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: Text('Carteirinha não validada'),
-                  content: Text('Sua carteirinha ainda não foi validada. Por favor, aguarde a liberação da secretaria.'),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop(); // Fecha o pop-up
-                      },
-                      child: Text('OK'),
-                    ),
-                  ],
-                );
-              },
-            );
-          }
-        }
+                }
     } 
   }
 
