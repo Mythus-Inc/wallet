@@ -1,12 +1,22 @@
 import 'dart:convert';  // Para codificar a imagem em base64
 import 'dart:io';  // Para o File
+import 'dart:typed_data';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:wallet_mobile/components/footer.dart';
+import 'package:wallet_mobile/dto/dto_aluno_foto.dart';
+import 'package:wallet_mobile/dto/dto_aluno_login.dart';
 import 'package:wallet_mobile/pages/login.dart';
+import 'package:wallet_mobile/service/aluno_service.dart';
+import 'package:image/image.dart' as img;
+import 'package:permission_handler/permission_handler.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 class CadastroPage extends StatefulWidget {
+
+  static bool ehCadastrado = false;
   @override
   _CadastroPageState createState() => _CadastroPageState();
 }
@@ -14,6 +24,9 @@ class CadastroPage extends StatefulWidget {
 class _CadastroPageState extends State<CadastroPage> {
   File? _imageFile;
   final ImagePicker _picker = ImagePicker();
+  
+  
+
 
   bool _isFormValid() {
     return _imageFile != null; // Verifica se a imagem foi anexada.
@@ -31,6 +44,11 @@ class _CadastroPageState extends State<CadastroPage> {
       setState(() {
         _imageFile = File(pickedFile.path);
       });
+
+      final result = await ImageGallerySaver.saveFile(pickedFile.path);
+      print("Imagem salva na galeria: $result");
+    }else {
+      print("Nenhuma imagem foi selecionada.");
     }
   }
 
@@ -75,7 +93,7 @@ class _CadastroPageState extends State<CadastroPage> {
     );
   }
 
-  void _onButtonPressed() {
+void _onButtonPressed() {
     _sendImageToServer().then((_) {
       // Navega para a página de solicitação de cadastro
       Navigator.of(context).push(
@@ -84,35 +102,83 @@ class _CadastroPageState extends State<CadastroPage> {
     }).catchError((error) {
       print("Erro: $error");
     });
-  }
+}
 
-  Future<void> _sendImageToServer() async {
-    try {
-      var url = Uri.parse('http://192.168.34.215:8080/cronos/rest/service/solicitacao-carteirinha');
-
-      var request = http.MultipartRequest('POST', url);
-
-      if (_imageFile != null) {
-        // Converte a imagem para base64
-        List<int> imageBytes = await _imageFile!.readAsBytes();
-        String base64Image = base64Encode(imageBytes);
-
-        // Envia a imagem como base64 no corpo da requisição
-        request.fields['foto'] = base64Image;
-      }
-
-      var response = await request.send();
-
-      if (response.statusCode == 200) {
-        print("Imagem enviada com sucesso.");
-      } else {
-        print("Erro ao enviar imagem: ${response.statusCode}");
-      }
-    } catch (e) {
-      print("Erro ao enviar a requisição: $e");
+Future<void> _saveImageToGallery(String imagePath) async {
+  try {
+    final result = await ImageGallerySaver.saveFile(imagePath);
+    
+    if (result['isSuccess']) {
+      print("Imagem salva na galeria: $result");
+    } else {
+      print("Erro ao salvar imagem: $result");
     }
+  } catch (e) {
+    print("Erro ao salvar a imagem na galeria: $e");
   }
+}
 
+Future<void> _requestStoragePermission() async {
+  if (await Permission.storage.request().isGranted) {
+    print("Permissão concedida.");
+    // Chame o método para salvar a imagem
+  } else {
+    print("Permissão negada.");
+  }
+}
+
+
+Future<void> _sendImageToServer() async {
+ 
+    var url = Uri.parse('http://192.168.139.215:8080/cronos/rest/service/solicitacao-carteirinha');
+    var headers = {'Content-Type': 'application/json; charset=UTF-8'};
+ 
+
+   // Recupera os dados do aluno
+   // Future<DtoalunoLogin?> dadosAlunoFuture = AlunoService.recuperarAlunoSalvo();
+    //DtoalunoLogin? dadosAluno = await dadosAlunoFuture; 
+    String ra = "20240006665";
+    // if (dadosAluno != null && dadosAluno.ra != null) {
+    //   ra = dadosAluno.ra;
+    //   print("RA ALUNO: " + ra);
+    // } else {
+    //   print("ERRO AO CARREGAR RA SALVO LOCALMENTE NO CADASTRO DA IMAGEM DO USUÁRIO");
+    //   return;
+    // }
+    print("IMAGE FILE: ${_imageFile}");
+   
+    if (_imageFile != null) {
+        File imageFilePath = File(_imageFile!.path);
+        List<int> imageBytes = await imageFilePath.readAsBytes();
+        if (imageBytes.isEmpty) {
+          print("Erro: arquivo vazio ou não pôde ser lido.");
+          return;
+        }
+
+      // Codificar diretamente em Base64
+      String base64Image = base64Encode(imageBytes);
+      print("BASE64: $base64Image");
+
+      var dto = DtoAlunoFoto(ra, base64Image);
+      var body = jsonEncode(dto);
+
+      // Envio ao servidor
+      var response = await http.post(url, headers: headers, body: body);
+      print("RESPONSE: ${response.statusCode}");
+        print("Resposta do servidor: ${response.body}");
+        if (response.statusCode == 200) {
+          print("Imagem enviada com sucesso.");
+        } else {
+          print("Erro ao enviar imagem: ${response.statusCode}");
+          print("Resposta do servidor: ${response.body}");
+        }
+      } else {
+        print("Nenhuma imagem selecionada.");
+      }
+
+    CadastroPage.ehCadastrado = true;
+ 
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wallet_mobile/dto/dto_aluno_login.dart';
 import 'package:wallet_mobile/pages/carteirinha.dart';
 import 'package:wallet_mobile/pages/cadastro.dart';
@@ -27,7 +28,7 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
     biometricService = BiometricService();
-    
+    bool isRegistered = CadastroPage.ehCadastrado;
     _passwordFocusNode.addListener(() {
       setState(() {
         // Mostra o ícone apenas quando o campo de senha está em foco
@@ -56,8 +57,18 @@ class _LoginPageState extends State<LoginPage> {
   
 
   Future<DtoalunoLogin> solicitarValidacaoCarteirinha() async {
-  
-    var url = Uri.parse('http://192.168.80.215:8080/cronos/rest/service/solicitacao-carteirinha/validada');
+    // Recupera os dados do aluno
+   // Future<DtoalunoLogin?> dadosAlunoFuture = AlunoService.recuperarAlunoSalvo();
+    //DtoalunoLogin? dadosAluno = await dadosAlunoFuture; 
+    String ra = "20240006665";
+    // if (dadosAluno != null && dadosAluno.ra != null) {
+    //   ra = dadosAluno.ra;
+    //   print("RA ALUNO: " + ra);
+    // } else {
+    //   print("ERRO AO CARREGAR RA SALVO LOCALMENTE NO CADASTRO DA IMAGEM DO USUÁRIO");
+    //   return;
+    // }
+    var url = Uri.parse('http://192.168.0.104:8080/cronos/rest/service/verificacao-status-carteirinha/$ra');
     var response = await http.get(
       url,
       headers: {'Content-Type': 'application/json; charset=UTF-8'},
@@ -74,7 +85,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<bool> loginCronos() async {
   
-    var url = Uri.parse('http://192.168.80.215:8080/cronos/rest/service/login');
+    var url = Uri.parse('http://192.168.139.215:8080/cronos/rest/service/login');
     var response = await http.post(
       url,
       headers: {'Content-Type': 'application/json; charset=UTF-8'},
@@ -97,33 +108,29 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> enter() async {
+    bool isRegistered = CadastroPage.ehCadastrado;
     if (_isFormValid()) {
-        bool eLoginValido = await loginCronos();
+        bool eLoginValido = true ; // await loginCronos();
         print("resultado login: $eLoginValido");
         if(eLoginValido){
             Future<DtoalunoLogin?> dadosAlunoFuture = AlunoService.recuperarAlunoSalvo();
             DtoalunoLogin? dadosAluno = await dadosAlunoFuture; 
-
-            if (dadosAluno != null) {
+            print("É REGISTRADO: $isRegistered");
+            if (isRegistered == false) {
               Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => CarteirinhaPage()),
+                MaterialPageRoute(builder: (context) => CadastroPage()),
               );
               return; 
             }else{
+              // aqui tem que mudar a lógica
               DtoalunoLogin dadosAlunoRecebidoDoBackend  = await solicitarValidacaoCarteirinha();
-              AlunoService.salvarAluno(dadosAlunoRecebidoDoBackend);
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => CarteirinhaPage()),
-              );
-
-                      }
-        }else{
-          showDialog(
+              if(dadosAlunoRecebidoDoBackend.statusCarteirinha == 1){
+                showDialog(
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
-                      title: Text('Login inválido'),
-                      content: Text('Sua senha ou ra está incorreto, lembre-se que são os mesmos dados utilizados para acessar o cronos!'),
+                      title: Text('Carteirinha pendente'),
+                      content: Text('Sua carteirinha ainda não foi validada, aguarde a validação para acessar a carteirinha digital!'),
                       actions: [
                         TextButton(
                           onPressed: () {
@@ -135,17 +142,55 @@ class _LoginPageState extends State<LoginPage> {
                     );
                   },
                 );
-        }     
+              }else if (dadosAlunoRecebidoDoBackend.statusCarteirinha == 2){
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Carteirinha recusada'),
+                      content: Text('Sua carteirinha foi recusada, prucure a secretaria para mais informações!'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(); 
+                          },
+                          child: Text('OK'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              }else {
+                AlunoService.salvarAluno(dadosAlunoRecebidoDoBackend);
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => CarteirinhaPage()),
+                );
+
+              }
+              
+            }
+        }
+        // else{
+        //   showDialog(
+        //           context: context,
+        //           builder: (BuildContext context) {
+        //             return AlertDialog(
+        //               title: Text('Login inválido'),
+        //               content: Text('Sua senha ou ra está incorreto, lembre-se que são os mesmos dados utilizados para acessar o cronos!'),
+        //               actions: [
+        //                 TextButton(
+        //                   onPressed: () {
+        //                     Navigator.of(context).pop(); 
+        //                   },
+        //                   child: Text('OK'),
+        //                 ),
+        //               ],
+        //             );
+        //           },
+        //         );
+        // }     
       }
-          DtoalunoLogin dadosAlunoRecebidoDoBackend  = await solicitarValidacaoCarteirinha();
-          AlunoService.salvarAluno(dadosAlunoRecebidoDoBackend);
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => CarteirinhaPage()),
-          );
-
-                }
-    } 
-
+  }
 
   @override
   Widget build(BuildContext context) {
