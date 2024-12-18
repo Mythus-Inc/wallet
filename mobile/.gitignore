@@ -31,6 +31,10 @@ migrate_working_dir/
 .pub/
 /build/
 
+# Ignorar pubspec.yaml e pubspec.lock
+pubspec.yaml
+pubspec.lock
+
 # Symbolication related
 app.*.symbols
 

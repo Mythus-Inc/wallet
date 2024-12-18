@@ -11,8 +11,12 @@ import 'package:wallet_mobile/dto/dto_aluno_login.dart';
 import 'package:wallet_mobile/pages/login.dart';
 import 'package:wallet_mobile/service/aluno_service.dart';
 import 'package:image/image.dart' as img;
+import 'package:permission_handler/permission_handler.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 class CadastroPage extends StatefulWidget {
+
+  static bool ehCadastrado = false;
   @override
   _CadastroPageState createState() => _CadastroPageState();
 }
@@ -20,6 +24,7 @@ class CadastroPage extends StatefulWidget {
 class _CadastroPageState extends State<CadastroPage> {
   File? _imageFile;
   final ImagePicker _picker = ImagePicker();
+  
   
 
 
@@ -39,6 +44,11 @@ class _CadastroPageState extends State<CadastroPage> {
       setState(() {
         _imageFile = File(pickedFile.path);
       });
+
+      final result = await ImageGallerySaver.saveFile(pickedFile.path);
+      print("Imagem salva na galeria: $result");
+    }else {
+      print("Nenhuma imagem foi selecionada.");
     }
   }
 
@@ -83,7 +93,7 @@ class _CadastroPageState extends State<CadastroPage> {
     );
   }
 
-  void _onButtonPressed() {
+void _onButtonPressed() {
     _sendImageToServer().then((_) {
       // Navega para a página de solicitação de cadastro
       Navigator.of(context).push(
@@ -92,12 +102,35 @@ class _CadastroPageState extends State<CadastroPage> {
     }).catchError((error) {
       print("Erro: $error");
     });
+}
+
+Future<void> _saveImageToGallery(String imagePath) async {
+  try {
+    final result = await ImageGallerySaver.saveFile(imagePath);
+    
+    if (result['isSuccess']) {
+      print("Imagem salva na galeria: $result");
+    } else {
+      print("Erro ao salvar imagem: $result");
+    }
+  } catch (e) {
+    print("Erro ao salvar a imagem na galeria: $e");
   }
+}
+
+Future<void> _requestStoragePermission() async {
+  if (await Permission.storage.request().isGranted) {
+    print("Permissão concedida.");
+    // Chame o método para salvar a imagem
+  } else {
+    print("Permissão negada.");
+  }
+}
 
 
 Future<void> _sendImageToServer() async {
  
-    var url = Uri.parse('http://192.168.6.215:8080/cronos/rest/service/solicitacao-carteirinha');
+    var url = Uri.parse('http://192.168.139.215:8080/cronos/rest/service/solicitacao-carteirinha');
     var headers = {'Content-Type': 'application/json; charset=UTF-8'};
  
 
@@ -142,6 +175,8 @@ Future<void> _sendImageToServer() async {
       } else {
         print("Nenhuma imagem selecionada.");
       }
+
+    CadastroPage.ehCadastrado = true;
  
 }
   @override
